@@ -30,10 +30,11 @@ in CLAUDE.md is a recurring per-turn cost (user is on Pro and hits hourly limits
 
 ## Decisions and why
 
-1. **`CLAUDE.template.md`, not `CLAUDE.md`.** Templates are suffixed `.template.md` so
-   Claude Code's auto-discovery never loads them as live instructions. If you create
-   more templates, keep this convention. Corollary: this repo currently has NO live
-   project CLAUDE.md — that is intentional until there's code that needs per-turn rules.
+1. **Templates are suffixed `.template.md`** so Claude Code's auto-discovery never
+   loads them as live instructions. If you create more templates, keep this convention.
+   Update 2026-07-12: the repo now HAS a live root `CLAUDE.md` — created (per the
+   original condition: code now exists under `experiments/`) by filling and replacing
+   `CLAUDE.template.md`, which was deleted (recoverable from git, commit 4b06f20).
 2. **`settings.local.json` is verification-first.** Its seed allows are `WebSearch` +
    `WebFetch(domain:www.anthropic.com)`: harness facts get checked against Anthropic
    sources or the local CLI, not arbitrary blogs. The harness also appends allows here
@@ -49,10 +50,9 @@ in CLAUDE.md is a recurring per-turn cost (user is on Pro and hits hourly limits
 
 ## Known weak points (stated plainly)
 
-- **No git.** This repo is not version-controlled (checked 2026-07-06). Config
-  mistakes are unrecoverable, and history-based tooling (`/code-review`, incident
-  mining) is unavailable. Recommended first fix: `git init` + initial commit. Until
-  then, treat every file edit as destructive.
+- **Git since 2026-07-12** (`git init` + user's initial commit 4b06f20). The weak
+  point now is discipline, not absence: the user makes their own commits, so uncommitted
+  work can still pile up between sessions — check `git status` at session start.
 - **Auto-memory is outside the repo.** The two memory files (user profile, learning
   goal) live in `~/.claude/projects/.../memory/` and won't travel with this folder.
   Anything load-bearing from memory has been copied into these skills or `.ai/`.
