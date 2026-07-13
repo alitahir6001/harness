@@ -1,46 +1,39 @@
 # Current task
 
 ## What
-Build a model-agnostic advisor/executor agent pattern in this repo, inspired by the
-ClaudeDevs "advisor tool" pipeline (frontier advisor consulted mid-task by a cheaper
-workhorse). Workhorse stays Claude-family, swapped via Claude Code's own model controls;
-the advisor is rebuilt outside Anthropic's native Advisor tool (which is server-side and
-Claude-only) as a custom MCP tool so it can point at any provider via config.
+Take the advisor/workhorse pattern (all 3 rungs built and verified in this repo,
+2026-07-12) from local experiment to portable tool: polish locally, promote to global
+scope, prove it from another project, then package as a plugin.
 
 ## Why
-User wants the planner/advisor + workhorse split from
-https://x.com/ClaudeDevs/status/2074606058128224365, but fully model-agnostic — swap
-either role without touching code. Native Advisor tool can't do that (Anthropic-only,
-server_tool_use). Fits this repo's role #2 (future home of the user's own harness/Agent
-SDK work) per `harness-architecture-contract`.
+User wants the pattern available in all projects and replicable onto other machines.
+The plugin is the end state: one installable unit bundling the agent, the skill, and
+the MCP server. Ordered rollout (local -> global -> plugin) so each move has a real
+test behind it before the next.
 
 ## Order of operations
-1. [x] Research native Advisor tool + advisor/executor pattern - agent (confirmed
-   server-side, Claude-only, via platform docs + vanja.io writeup)
-2. [x] Clarify scope via AskUserQuestion - user chose "Claude family only" for workhorse;
-   advisor swappable to any provider
-3. [x] Propose plan: `experiments/advisor-pattern/advisor_server.py` (MCP server, stdio),
-   provider dispatch via `ADVISOR_PROVIDER`/`ADVISOR_MODEL`/API-key env vars, escalation
-   rule embedded in the tool's MCP description, register in project `.mcp.json`, Class B
-   fresh-session test, backlog entry - agent
-4. [x] User answered: git init done (session 4, nothing committed yet); providers =
-   Anthropic + OpenAI; build deferred pending re-evaluation - user
-5. [x] Second-opinion evaluation (Fable 5, session 4): plan revised to a 3-rung ladder,
-   and confirmed `claude -p` still bills to subscription (June 15 2026 billing change was
-   announced May 14 but PAUSED before taking effect — see help center article 15036540).
-   Advisor adapters should dispatch to CLIs (subscription-billed) or APIs (credit-billed),
-   selected by env var - agent
-6. [ ] User to pick starting rung:
-   - Rung 1: advisor subagent (`.claude/agents/advisor.md`, `model:` frontmatter,
-     escalation rule in description) — zero code, Claude-only, subscription
-   - Rung 2: skill instructing Bash consult via `claude -p` / other vendor CLIs — teaches
-     cross-provider trick, no MCP
-   - Rung 3: `advisor_server.py` MCP server as originally planned, but with
-     {anthropic-cli, anthropic-api, openai-api} adapter backends - user
-7. [ ] Build chosen rung(s); rung 3 keeps the Class B `.mcp.json` fresh-session test bar - agent
+1. [x] Local polish pass (session 4 cont.): de-conflicted the three consult surfaces via
+   dogfood consult (advisor recommended MCP-carries-MUST; testing DISPROVED it — MCP tool
+   descriptions don't drive proactive consults and can be deferred out of context).
+   Final design: agent description = router (MUST + prefer consult_advisor, agent as
+   fallback), MCP tool + skill non-directive. Consult logging added to advisor_server.py
+   (verbatim JSONL, ADVISOR_LOG override). Test matrix all green: unsteered decision ->
+   one MCP consult; trivial task -> zero consults; MCP absent -> subagent fallback
+   consult. Open micro-decision for step 4: log location project-local vs ~/.claude
+   global once multi-machine - agent
+2. [ ] Promote globally: move `.claude/agents/advisor.md` and
+   `.claude/skills/consult-advisor-cli/` to `~/.claude/`, register the MCP server
+   globally; delete the project-local copies (one home per fact) - agent, gated as a
+   global-scope change per `harness-change-control`
+3. [ ] Real cross-project test: fresh session in a DIFFERENT project, verify the advisor
+   registers and a seeded decision triggers exactly one consult - agent
+4. [ ] Package as plugin: bundle agent + skill + MCP server config; install on this
+   machine from the plugin and re-run the rung tests against the plugin-provided
+   versions - agent
+5. [ ] Replicate onto another machine via the plugin - user
 
 ## Out of scope
-- Making the workhorse itself non-Claude — ruled out by the user's answer. That would
-  need an external orchestrator outside Claude Code, not this repo's current shape.
-- Creating a root `CLAUDE.md` — still deferred per `harness-architecture-contract`;
-  unrelated to this task.
+- Non-Claude workhorse (needs an external orchestrator; parked — see
+  `harness-research-frontier` for the Agent SDK path).
+- Live-testing the anthropic-api / openai-api adapters — no API keys on this machine;
+  they stay marked untested until keys exist.

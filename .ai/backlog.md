@@ -2,6 +2,17 @@
 
 Rolling log of recent sessions, newest first. Roll entries out to CLAUDE.md once 4+ stack up.
 
+## Last session: 2026-07-12 (session 4)
+Built and verified all three rungs of the advisor/workhorse ladder: advisor subagent
+(Fable, directive MUST-form escalation rule — polite wording demonstrably fails with
+Haiku), cross-provider CLI consult skill (proven live against Gemini), and a stdlib-only
+MCP server with provider adapters (anthropic-cli/gemini-cli tested; api adapters coded,
+untested — no keys). Also: git init + user's initial commit, verified `claude -p` still
+bills subscription (June 15 billing change was paused), created root CLAUDE.md from the
+template (template deleted), corrected two stale invariants in
+harness-architecture-contract. Open: polish -> global promotion -> cross-project test ->
+plugin (see current-task.md).
+
 ## Last session: 2026-07-12 (session 3)
 Confirmed the session-context trio still orients correctly on a cold read (no changes).
 Pivoted to a new goal: a model-agnostic advisor/executor pattern (ClaudeDevs-style
@@ -22,13 +33,5 @@ the native "/" autocomplete menu; typed `/skill-name` still reaches Claude as te
 matched). Corrected an earlier wrong claim that `.ai/` is "often gitignored" — verified via
 `git ls-files` it's tracked in job-apply, oneness-suite, and alitahir6001.github.io. Updated
 `SKILLS_AVAILABLE.md` to reflect the rename. Trio is now considered done; no open task.
-
-## Last session: 2026-07-08 (session 1)
-Rebuilt the three session-context skills (`create-session-context`, `update-session-context`,
-`get-session-context`) in `~/.claude/skills/` using patterns from job-apply, oneness-suite,
-alitahir6001.github.io, and brads-tool `.ai/` directories. Deleted this repo's old (pre-rename)
-`.ai/` and ran both playbooks against it as a smoke test; skipped creating a `CLAUDE.md` since
-`harness-architecture-contract` documents that as intentionally deferred. Next: test
-`get-session-context` from an actual fresh session.
 
 ## Parked items (not session-bound)
