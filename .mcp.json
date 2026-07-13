@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "advisor": {
+      "command": "python3",
+      "args": ["experiments/advisor-pattern/advisor_server.py"],
+      "env": {
+        "ADVISOR_PROVIDER": "anthropic-cli",
+        "ADVISOR_MODEL": "fable"
+      }
+    }
+  }
+}
