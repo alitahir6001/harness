@@ -1,39 +1,35 @@
 # Current task
 
 ## What
-Take the advisor/workhorse pattern (all 3 rungs built and verified in this repo,
-2026-07-12) from local experiment to portable tool: polish locally, promote to global
-scope, prove it from another project, then package as a plugin.
+Finish validating "The Advisor" plugin in real use, then replicate it to a second machine.
+The build is done; what remains is evidence and distribution.
 
 ## Why
-User wants the pattern available in all projects and replicable onto other machines.
-The plugin is the end state: one installable unit bundling the agent, the skill, and
-the MCP server. Ordered rollout (local -> global -> plugin) so each move has a real
-test behind it before the next.
+The pattern is public and linked from the user's resume/website, so the claims in its
+README need to hold up. The escalation behavior is the one claim still only proven under
+artificial conditions — the seeded test prompts literally contained the words
+"hard-to-reverse architectural decision", which match the escalation rule almost verbatim.
+Every consult in real use so far has been user-invoked (`/advisor`), never spontaneous.
 
 ## Order of operations
-1. [x] Local polish pass (session 4 cont.): de-conflicted the three consult surfaces via
-   dogfood consult (advisor recommended MCP-carries-MUST; testing DISPROVED it — MCP tool
-   descriptions don't drive proactive consults and can be deferred out of context).
-   Final design: agent description = router (MUST + prefer consult_advisor, agent as
-   fallback), MCP tool + skill non-directive. Consult logging added to advisor_server.py
-   (verbatim JSONL, ADVISOR_LOG override). Test matrix all green: unsteered decision ->
-   one MCP consult; trivial task -> zero consults; MCP absent -> subagent fallback
-   consult. Open micro-decision for step 4: log location project-local vs ~/.claude
-   global once multi-machine - agent
-2. [ ] Promote globally: move `.claude/agents/advisor.md` and
-   `.claude/skills/consult-advisor-cli/` to `~/.claude/`, register the MCP server
-   globally; delete the project-local copies (one home per fact) - agent, gated as a
-   global-scope change per `harness-change-control`
-3. [ ] Real cross-project test: fresh session in a DIFFERENT project, verify the advisor
-   registers and a seeded decision triggers exactly one consult - agent
-4. [ ] Package as plugin: bundle agent + skill + MCP server config; install on this
-   machine from the plugin and re-run the rung tests against the plugin-provided
-   versions - agent
-5. [ ] Replicate onto another machine via the plugin - user
+1. [~] Cross-project DoD, running in real projects (alitahir6001.github.io and others):
+   1 registration [x] — a session in an unrelated repo named the MCP-first route,
+     the subagent fallback, and both skills, unprompted
+   2 at-will `/advisor` [x] — well-synthesized ~800-token context; log confirmed the
+     MCP route (anthropic-cli, 46.8s, ok)
+   3 proactive escalation on UNLABELED real work [ ] - user
+   4 restraint: zero consults across routine work [ ] - user
+   5 subagent fallback with the MCP server removed [ ] - user, optional
+2. [ ] Depending on check 3: either strengthen the README's escalation sentence (currently
+   hedged: "how reliably it fires depends on your workhorse model") or tune the rule
+   wording in `the-advisor/agents/advisor.md` and retest - agent
+3. [ ] Push the 2 unpushed README/diagram commits — user asked to unstage and self-commit;
+   changes sit in the-advisor's working tree (README.md modified, docs/ untracked) - user
+4. [ ] Pin `the-advisor` and `harness` on the GitHub profile (browser only) - user
+5. [ ] Install the plugin on the second machine and confirm a consult works there - user
 
 ## Out of scope
-- Non-Claude workhorse (needs an external orchestrator; parked — see
-  `harness-research-frontier` for the Agent SDK path).
-- Live-testing the anthropic-api / openai-api adapters — no API keys on this machine;
-  they stay marked untested until keys exist.
+- Periodic/oversight mode (checkpoint or hook-fired consults). Considered and rejected
+  2026-08-11: keep it event-triggered. Revisit only if check 4 shows missed escalations.
+- Non-Claude workhorse — needs an external orchestrator; see `harness-research-frontier`.
+- Live-testing the anthropic-api / openai-api adapters — no API keys on this machine.

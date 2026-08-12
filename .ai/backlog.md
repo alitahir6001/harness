@@ -2,16 +2,19 @@
 
 Rolling log of recent sessions, newest first. Roll entries out to CLAUDE.md once 4+ stack up.
 
-## Last session: 2026-07-12 (session 4)
-Built and verified all three rungs of the advisor/workhorse ladder: advisor subagent
-(Fable, directive MUST-form escalation rule — polite wording demonstrably fails with
-Haiku), cross-provider CLI consult skill (proven live against Gemini), and a stdlib-only
-MCP server with provider adapters (anthropic-cli/gemini-cli tested; api adapters coded,
-untested — no keys). Also: git init + user's initial commit, verified `claude -p` still
-bills subscription (June 15 billing change was paused), created root CLAUDE.md from the
-template (template deleted), corrected two stale invariants in
-harness-architecture-contract. Open: polish -> global promotion -> cross-project test ->
-plugin (see current-task.md).
+## Last session: 2026-08-11 (session 4)
+Long session that took the advisor/workhorse pattern from idea to a published plugin.
+Built all three rungs (advisor subagent, cross-provider CLI skill, stdlib-only MCP server
+with provider adapters), then de-conflicted routing after testing DISPROVED the design
+the advisor itself recommended — MCP tool descriptions can be deferred out of context, so
+the MUST rule has to live on the always-loaded agent description. Promoted to `~/.claude/`,
+then repackaged everything as the public plugin "The Advisor" in its own repo
+(github.com/alitahir6001/the-advisor) and deleted the now-duplicate global copies.
+Learned: escalation wording must be directive; `claude -p` still bills subscription (the
+June 15 2026 change was paused); the CLI login lapses unless `CLAUDE_CODE_OAUTH_TOKEN` is
+in the shell profile. Corrected an overclaim before publishing — proactive escalation is
+only proven against seeded prompts containing the rule's own trigger words. Open: DoD
+checks 3-5, then a second-machine install.
 
 ## Last session: 2026-07-12 (session 3)
 Confirmed the session-context trio still orients correctly on a cold read (no changes).
