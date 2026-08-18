@@ -12,9 +12,10 @@ checks 3-5, then install on a second machine.
 - Fresh-session behavior test (the validation bar for config changes):
   `claude -p "<prompt>" --model haiku --output-format stream-json --verbose`
   Parse the stream for actual `tool_use` entries — that, not the prose reply, is the evidence.
-- Read the advisor's consult log (plugin writes to its own data dir, NOT `~/.claude/advisor/`,
-  which is the pre-plugin archive of 9 consults):
-  `ADVISOR_LOG=~/.claude/plugins/data/the-advisor-the-advisor/consult-log.jsonl python3 ~/.claude/advisor/consults.py --stats`
+- Read the advisor's consult log. The plugin's data dir resolved to `the-advisor-inline`
+  (NOT `the-advisor-the-advisor`, which exists but stays empty); `~/.claude/advisor/` is
+  the pre-plugin archive of 9 consults. Verify the path before trusting a count:
+  `ADVISOR_LOG=~/.claude/plugins/data/the-advisor-inline/consult-log.jsonl python3 ~/.claude/advisor/consults.py --stats`
 
 ## Architecture / non-obvious decisions
 - One home per fact: skills = durable knowledge, `.ai/` = live session state, this file =
