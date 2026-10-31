@@ -40,7 +40,7 @@ not observed here.
 
 | File | Scope | Observed contents here |
 |---|---|---|
-| `~/.claude/settings.json` | user, all projects | `env` (holds the OAuth token: never print raw), `effortLevel: medium`, `tui: fullscreen`, `enabledPlugins`, `extraKnownMarketplaces`, `pluginConfigs`; no `model` key (2026-10-31) |
+| `~/.claude/settings.json` | user, all projects | `env` (holds the OAuth token: never print raw), `effortLevel: medium`, `tui: fullscreen`, `enabledPlugins`, `extraKnownMarketplaces`, `pluginConfigs`, `hooks` (the stop gate); no `model` key (2026-10-31) |
 | `.claude/settings.json` | project, shared | none in this repo |
 | `.claude/settings.local.json` | project, personal | `permissions.allow`: WebSearch, `WebFetch(domain:www.anthropic.com)`, plus read-only allows accumulated from approved permission prompts (the harness persists approvals here) |
 
@@ -48,10 +48,25 @@ Permission rule syntax observed: `ToolName` or `ToolName(qualifier)` e.g.
 `WebFetch(domain:www.anthropic.com)`, `Bash(git *)`. Precedence (UNVERIFIED, per docs):
 enterprise policy > CLI args > local project > project > user.
 
-Hooks live under a `hooks` key in settings.json. Standard events per docs (UNVERIFIED
-locally — no hooks configured anywhere on this machine yet): `PreToolUse`, `PostToolUse`,
-`UserPromptSubmit`, `Stop`, `SessionStart`, plus others. Re-verify against docs before
-writing your first hook: https://code.claude.com/docs/en/hooks
+Hooks live under a `hooks` key in settings.json. Events per docs include `PreToolUse`,
+`PostToolUse`, `UserPromptSubmit`, `Stop`, `SessionStart`, plus others; `PostToolUse` and
+`Stop` verified locally 2026-10-31 (this repo's `stop_gate.py`). Stop facts that matter:
+`transcript_path` can lag the current turn, so track state via PostToolUse instead;
+`additionalContext` continues the turn without the error label `decision: block` gets;
+`stop_hook_active` plus an 8-continuation cap prevent loops. Docs:
+https://code.claude.com/docs/en/hooks
+
+Measured 2026-10-31 (CC 2.1.281, `experiments/stop-gate-test/RESULT.md`):
+- A subagent's tool calls fire the settings-file PostToolUse hooks with the **parent's**
+  `session_id`, plus `agent_id`/`agent_type` (6/6 runs). Parent-keyed state sees them.
+- Agent-tool subagents ran async in 6/7 `-p` Haiku runs: that's the default when
+  `run_in_background` is unset (the 7th passed `false`). The main turn can end while one runs. Stop input's `background_tasks` lists it (`type: "subagent"`;
+  docs). A Stop hook that ignores it fires on that waiting turn.
+- An identical handler command in user settings and `--settings` runs once (dedup).
+- `--settings '{"disableAllHooks": true}'` keeps user-scope hooks out of one run.
+- `python3 <missing file>` exits 2, and exit 2 on Stop blocks. Guard script paths with `[ -f ]`.
+- In transcripts a Stop hook's `additionalContext` is an `attachment` row of type
+  `hook_additional_context`; usage repeats per content block, so dedupe by `requestId`.
 
 ## Skills (format verified from ~/.claude/skills/build-skill-library/SKILL.md)
 
