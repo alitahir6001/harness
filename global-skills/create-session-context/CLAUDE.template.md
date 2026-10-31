@@ -1,9 +1,9 @@
 <!-- Durable, project-specific knowledge for the agent. Auto-loaded every session.
      Maintenance: permanent facts only (ephemeral state -> .ai/handoff.md); add gotchas as
-     you hit them and never delete them (compress instead); update "Recent context" at
-     session end. Soft cap ~200-250 lines, ideally far less.
-     Read order at session start: this file -> .ai/rules.md -> .ai/current-task.md
-     -> .ai/handoff.md -> .ai/backlog.md. -->
+     you hit them and never delete them (compress instead); edit only when the user asks.
+     Soft cap ~200-250 lines, ideally far less.
+     At session start get-session-context reads .ai/handoff.md only; .ai/rules.md and
+     .ai/backlog.md load on demand. -->
 
 # [Project name]
 
@@ -36,11 +36,6 @@ current state rather than duplicating it here.]
 - [Things that look reasonable but are wrong here — e.g. "don't add a bundler", "never run
   git, that's the user's job", "don't fabricate content".]
 
-## Recent context (last few sessions)
-<!-- Small/single-purpose projects can skip this — .ai/backlog.md already covers it. -->
-- **[date] (session N):** [2-3 sentences — what shipped, what's next. Compress or drop
-  older entries as this grows; full history lives in `.ai/backlog.md`.]
-
 <!-- =========================================================
      DELETE EVERYTHING BELOW BEFORE USING — it's usage guidance.
      =========================================================
@@ -62,8 +57,9 @@ current state rather than duplicating it here.]
     things go wrong.
   - Small/single-purpose projects (POCs, single-integration tools) don't need every
     section above — What this project is / Stack / a "Key behaviors" list / Out of
-    scope / Known constraints is often enough. Skip File map, Architecture, and
-    Recent context if there's not enough project to say anything non-obvious in them.
+    scope / Known constraints is often enough. Skip File map and Architecture
+    if there's not enough project to say anything non-obvious in them.
+  - Session history goes in .ai/backlog.md, not here.
 
   Placement:
   - ./CLAUDE.md            project root, shared via git
