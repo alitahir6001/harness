@@ -15,6 +15,15 @@ Problem (from memory, confirmed 2026-07-06): Pro plan, regularly hits the rollin
 
 ## Phase 0 — Baseline (no baseline, no campaign)
 
+Measured baseline (September 2026, audit of 171 sessions across the user's projects):
+- Session startup in job-apply: ~49k tokens reading every `.ai/` file eagerly → ~15k
+  after lazy loading (handoff only) and CLAUDE.md dedupe, a 69% cut.
+- Late wrap-ups cost ~2× the output of early ones (~11,200 vs ~5,700 tokens), holding
+  when matched on workload. Write the handoff at a task boundary.
+- Method gotchas: transcript JSONL repeats one response's `usage` across several
+  records, so dedupe by `requestId` or counts double; dense markdown ran ~2.5 bytes/token,
+  not the usual 4.
+
 ```bash
 bash .claude/skills/harness-runbook/scripts/audit-config.sh   # always-loaded inventory
 ```
@@ -29,8 +38,9 @@ at all → fall back to the crudest metric: wall-clock time until the cap messag
 
 ## Phase 1 — The big lever: model and effort
 
-Verified 2026-07-06: `~/.claude/settings.json` sets `model: opus`, `effortLevel: high`
+Verified 2026-07-06: `~/.claude/settings.json` set `model: opus`, `effortLevel: high`
 — the most expensive default available, applied to ALL projects, including trivial tasks.
+As of 2026-10-31 it has no `model` key and `effortLevel: medium` (audit script).
 
 - Action: keep opus for hard work, drop to sonnet for routine work — per-session
   (`claude --model sonnet` or `/model`) before changing the global default.
@@ -48,7 +58,8 @@ Verified 2026-07-06: `~/.claude/settings.json` sets `model: opus`, `effortLevel:
 Every line in global CLAUDE.md, memory MEMORY.md, and every skill description is paid
 on every turn/session. Current footprint is small (audit, 2026-07-06: 7-line global
 CLAUDE.md, 2-line memory index, ~9 skill descriptions) — so the risk is GROWTH, not
-the current state.
+the current state. The growth happened: 2026-10-31 audit shows a 113-line global
+CLAUDE.md, a 40-line project CLAUDE.md and a 6-line memory index.
 - Action: enforce change-control rule 1 ("always-loaded text pays rent"); re-run the
   audit monthly; keep skill descriptions dense but single-sentence-per-concern.
 - **Kill-test:** if the audit shows the always-loaded set under ~150 lines total,
@@ -89,7 +100,9 @@ Class C sign-off (`harness-change-control`).
 
 ## Provenance and maintenance
 
-- Written 2026-07-06, CC 2.1.193. Settings facts: `cat ~/.claude/settings.json`.
+- Written 2026-07-06, CC 2.1.193; updated 2026-10-31, CC 2.1.281. Settings facts:
+  `audit-config.sh` (never `cat ~/.claude/settings.json`: its `env` holds the OAuth token).
+- Phase 0 baseline source: the September 2026 cross-project audit (README "Cost" findings).
 - Footprint numbers: re-run `audit-config.sh` (they WILL drift as skills are added).
 - Plan limits change; re-check https://www.anthropic.com pricing/limits pages before
   trusting the Phase 1 weighting claim.
