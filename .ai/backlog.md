@@ -2,7 +2,24 @@
 
 Session history (newest first) and parked work. Not read at session start; pull it in when asked.
 
-## Last session: 2026-10-31 (cleanup)
+## Last session: 2026-10-31 (stop gate: subagents, global, field report)
+- Class B, `stop_gate.py` v1.1: marker lines gain `agent_id`/`agent_type`/`cwd`; labels drop
+  the session cwd; Stop defers while a background subagent runs. Why: the subagent A/B
+  (Haiku, n=3) showed truncated labels (`…/project/d`) and a nudge spent on a waiting turn,
+  so the parent checked 1/3. After v1.1: 2/3. Verified: 20 unit tests + 3 Haiku runs.
+- SubagentStop: NOT registered (user decision 2026-10-31). The parent's nudge already
+  names subagent actions (6/6); SubagentStop would also nudge read-only Explore agents.
+- Class C, user-approved 2026-10-31: gate registered in `~/.claude/settings.json` via
+  `.claude/hooks/install_global.py` (backup `settings.json.bak-stopgate-20261031-160521`,
+  chmod 600; only `hooks` added, verified by diff vs backup). Project-local registration
+  removed. Verified: fresh Haiku `-p` in a scratch dir logged mark, nudge, allow; this
+  session kept logging once per call after the switch.
+- Runner isolation: control/prose pass `disableAllHooks`; proven by 0 global marker lines.
+- `field_report.py` + 3 tests, run on the live log (4 nudges, 2 projects).
+- Haiku spend this session (`modelUsage`): 1,767,511 cache-read, 192,452 cache-write,
+  727 input, 19,081 output, over 10 runs.
+
+## 2026-10-31 (cleanup)
 Fixed repo-wide drift found by the 2026-10-30 review. `current-task.md` folded into
 `handoff.md` and removed; `rules.md` took the current create-session-context template;
 CLAUDE.md lost its retracted "MUST"/directive-wording claims; the seven project skills
@@ -12,6 +29,13 @@ into `global-skills/` (Class C, user-approved 2026-10-31) with symlinks back fro
 `~/.claude/skills/`. Regenerated SKILLS_AVAILABLE.md. Verified with fresh Haiku
 `claude -p` runs: from an unrelated dir the init event listed all 4 symlinked skills; in
 this repo `/get-session-context` made exactly one Read, of `.ai/handoff.md`.
+
+Then built the first hook: `.claude/hooks/stop_gate.py`, a Stop-hook verification gate
+(Class B). A/B on the deploy fixture, Haiku, n=3: hook checked the real effect 3/3,
+control 0/3, same text as a prose CLAUDE.md rule 0/3; ~2.9x tokens. v0's generic nudge
+verified the wrong file; v1 names the turn's recorded actions. Registered in
+`.claude/settings.local.json`, verified by a fresh `-p` run in this repo (marker:
+mark, nudge, allow). Details: `experiments/stop-gate-test/RESULT.md`.
 
 ## 2026-08-12 to 2026-10-30 (no backlog entries were written)
 Per the 2026-10-30 review: sessions in this folder were design work for other projects
