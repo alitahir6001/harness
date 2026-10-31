@@ -1,114 +1,64 @@
 # Available Claude Code Skills
 
-## Stock Skills (Bundled with Claude)
+Generated 2026-10-31 from a live session's skill list (Claude Code 2.1.281, desktop app Code
+tab, working dir = this repo). Skills marked manual-only set `disable-model-invocation`
+and don't appear in that list; they come from `~/.claude/skills/`. The bundled set differs
+by client: a CLI `claude -p` init event (same date) also listed `batch`, `debug`,
+`design`, `design-sync`, `doctor`, `run-skill-generator`, `verify`, `workflow-authoring`
+and lacked the `anthropic-skills:` set.
 
-* **build-skill-library**
-  * Create a tailor-made skill library under .claude/skills/ with five foundational skills to document your project for future sessions and smaller models.
+## Custom
 
-* **code-review**
-  * Review code diffs for correctness bugs and efficiency cleanups at multiple effort levels, with options to post findings as PR comments or apply fixes.
+### Project (`.claude/skills/`, this repo)
 
-* **simplify**
-  * Review changed code for reuse, simplification, efficiency, and refactor opportunities, then automatically apply fixes.
+| Skill | What it does |
+|---|---|
+| `harness-architecture-contract` | Why files live where they do; three-store separation; known weak points |
+| `harness-change-control` | Which config edits are free, which need a fresh-session test or user sign-off |
+| `harness-evidence-and-analysis` | Discriminating probes, premise teardown, root cause for "Claude ignored my rule" |
+| `harness-reference` | Config layers: where each lives, when it loads, what it costs |
+| `harness-research-frontier` | Open problems: own harness on the Agent SDK, trigger reliability, first hooks |
+| `harness-runbook` | Setup, config catalog, diagnostic scripts, symptom triage, validation bar |
+| `harness-token-efficiency-campaign` | Phased plan against the Pro 5-hour usage cap |
 
-* **fewer-permission-prompts**
-  * Scan your transcripts for common read-only tool calls and add an allowlist to settings.json to reduce permission prompts.
+### Global (`~/.claude/skills/`)
 
-* **loop**
-  * Run a prompt or slash command on a recurring interval with self-pacing or fixed delays.
+| Skill | Source | What it does |
+|---|---|---|
+| `create-session-context` | `global-skills/` (symlink), manual-only | Scaffold `.ai/` (handoff, rules, backlog) and a root CLAUDE.md |
+| `get-session-context` | `global-skills/` (symlink), manual-only | Orient a fresh session from `.ai/handoff.md` only |
+| `update-session-context` | `global-skills/` (symlink), manual-only | Rewrite `.ai/handoff.md` at a task boundary |
+| `build-skill-library` | `global-skills/` (symlink) | Author a 5-skill project library (this repo's seven came from it) |
+| `grill-me` | `~/.claude/skills/` only | Interview the user about a plan until each decision branch is resolved |
 
-* **schedule**
-  * Create and manage cloud agents on cron schedules for automated recurring tasks.
+### Plugin: `the-advisor` (github.com/alitahir6001/the-advisor)
 
-* **claude-api**
-  * Reference for Claude API / Anthropic SDK — model IDs, pricing, streaming, tool use, and token counting.
+| Skill | What it does |
+|---|---|
+| `the-advisor:consult` | Ask the advisor a direct question |
+| `the-advisor:second-opinion` | Route a question to a named provider's CLI (claude, gemini, codex) |
+| `the-advisor:advisor-model` | Show or change the advisor model without a restart |
+| `the-advisor:doctor` | Check that the advisor install works |
 
-* **run**
-  * Launch this project's app and verify changes work in the real environment.
+## Bundled
 
-* **init**
-  * Initialize a new CLAUDE.md file with codebase documentation.
+### Claude Code built-in
 
-* **review**
-  * Review a GitHub pull request.
+`code-review`, `simplify`, `security-review`, `init`, `run`, `loop`, `schedule`,
+`claude-api`, `update-config`, `keybindings-help`, `fewer-permission-prompts`,
+`plugin-authoring`, `dataviz`, `artifact-design`, `artifact-diagramming`,
+`artifact-capabilities`
 
-* **security-review**
-  * Perform security-focused code review.
+### From the Anthropic account (claude.ai)
 
-* **verify**
-  * Verify that a code change actually works by running the app and observing behavior.
-
----
-
-## Custom Skills (Project/Harness-Specific)
-
-* **harness-architecture-contract**
-  * Documents the load-bearing design decisions of the harness workspace — why files live where they do and known weak points.
-
-* **harness-change-control**
-  * Explains how config changes are classified and gated — which edits are free vs. which need testing or sign-off.
-
-* **harness-evidence-and-analysis**
-  * Provides recipes for verifying harness behavior through discriminating probes and root-cause analysis.
-
-* **harness-reference**
-  * Domain reference for Claude Code harness configuration layers — where each lives, when it loads, and its token cost.
-
-* **harness-research-frontier**
-  * Documents open problems and next-level harness projects, including building a custom harness on the Agent SDK.
-
-* **harness-runbook**
-  * Runbook for harness operations and troubleshooting.
-
-* **harness-token-efficiency-campaign**
-  * Campaign guide for optimizing token usage in the harness.
-
-* **update-config**
-  * Configure the Claude Code harness via settings.json, manage permissions, set env vars, and troubleshoot hooks.
-
-* **keybindings-help**
-  * Customize keyboard shortcuts and rebind keys in ~/.claude/keybindings.json.
-
-* **create-session-context**
-  * Scaffold a new project's `.ai/` memory files (rules, current-task, handoff, backlog) and an optional root CLAUDE.md. Manual-only — invoke with `/create-session-context`. Renamed from `new-project-bootstrap`.
-
-* **update-session-context**
-  * Populate the `.ai/` memory files from the current session's work, run once at session end. Manual-only — invoke with `/update-session-context`. Renamed from `populate-ai-files`.
-
-* **get-session-context**
-  * Orient a fresh session on an existing project by reading CLAUDE.md + `.ai/` files, then report where things left off and what the current task is. Manual-only — invoke with `/get-session-context`.
-
-* **anthropic-skills:consolidate-memory**
-  * Reflective pass over memory files — merge duplicates, fix stale facts, and prune the index.
-
-* **anthropic-skills:docx**
-  * Tools for working with Word documents (.docx format).
-
-* **anthropic-skills:pdf**
-  * Tools for working with PDF documents.
-
-* **anthropic-skills:pptx**
-  * Tools for working with PowerPoint presentations.
-
-* **anthropic-skills:setup-cowork**
-  * Set up cowork plugin integration.
-
-* **anthropic-skills:skill-creator**
-  * Create custom skills.
-
-* **anthropic-skills:xlsx**
-  * Tools for working with Excel spreadsheets.
-
-* **cowork-plugin-management:cowork-plugin-customizer**
-  * Customize cowork plugins.
-
-* **cowork-plugin-management:create-cowork-plugin**
-  * Create new cowork plugins.
-
----
+- `anthropic-skills:` `built-in-browser`, `chrome-browser`, `computer-use`,
+  `consolidate-memory`, `deep-research`, `docs`, `docx`, `explain-usage`,
+  `google-workspace`, `import-memory`, `morning`, `pdf`, `pptx`, `setup-claude`,
+  `skill-creator`, `xlsx`
+- `cowork-plugin-management:` `cowork-plugin-customizer`, `create-cowork-plugin`
 
 ## Summary
 
-- **Stock Skills:** 12
-- **Custom Skills:** 20
-- **Total:** 32 skills available
+- Custom: 16 (7 project, 5 global, 4 plugin)
+- Bundled: 34 (16 Claude Code built-in, 18 from the Anthropic account)
+- Total: 50
