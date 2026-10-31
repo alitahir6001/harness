@@ -32,10 +32,11 @@ that happened to land.
 
 ```
 .claude/skills/     seven project skills, the durable knowledge layer
-.ai/                live session state (handoff, current task, backlog, rules)
+.ai/                live session state (handoff, backlog, rules)
 CLAUDE.md           per-turn rules only
 SKILLS_AVAILABLE.md catalog of stock + custom skills
-experiments/        runnable code
+global-skills/      source of the user-level session skills, symlinked into ~/.claude/skills/
+experiments/        runnable code, plus the test stubs behind the findings below
 ```
 
 The split is deliberate and enforced: **skills hold durable knowledge, `.ai/` holds
@@ -92,5 +93,4 @@ It is kept for history and **is not what runs**. Edit the plugin repo instead.
 ## Status
 
 Advisor pattern shipped and lives in its own repo. Its proactive-escalation test came back
-negative (see Findings), so it is invoked on demand. This repo's own session files have
-not been moved to the leaner layout yet.
+negative (see Findings), so it is invoked on demand.
