@@ -13,10 +13,12 @@ discovery actually finds — the slots are fixed, the content is this repo's.
 
 ## Phase 1 — Discover (read-only)
 
-**Start with `.ai/` — the user maintains this directory by hand in most of his projects.**
-The usual layout (may vary per project): `rules.md` (locked project rules),
-`current-task.md` (the active task), `handoff.md` (live state snapshot), `backlog.md`
-(session history), sometimes `notes.md` or demo/readiness docs. Read every file in it.
+**Start with `.ai/` — the user maintains this directory by hand in most of their projects.**
+The usual layout (may vary per project): `handoff.md` (live state snapshot; its Active
+task section names the current task), `rules.md` (locked project rules), `backlog.md`
+(parked work, sometimes session history), sometimes `notes.md` or demo/readiness docs.
+A legacy `current-task.md` may still exist in unmigrated projects. Sessions read only
+`handoff.md` at startup, but this is a one-time build: read every file in it.
 Treat its contents as the primary source for history, incidents, priorities, and
 unwritten rules — it usually answers most discovery questions outright. **Note which
 files are still placeholders or thin**: each gap becomes a targeted question below, and
@@ -30,13 +32,14 @@ reads only; don't read the whole tree.
 Then ask the user AT MOST 3 questions — targeted at what `.ai/` and the repo did NOT
 answer, not generic. Derive them from the actual gaps found. Fallbacks if the docs are
 rich and little is missing:
-1. What is the hardest live problem right now? (Skip if `current-task.md`/`handoff.md`
-   already name it — instead CONFIRM it in one line while asking something else.)
+1. What is the hardest live problem right now? (Skip if handoff's Active task (or a legacy
+   `current-task.md`) already names it — instead CONFIRM it in one line while asking
+   something else.)
 2. Who is the audience (future AI sessions? human juniors? both) and what do they NOT know?
 3. Any unwritten rules or expensive past failures not captured in `.ai/` or any doc?
 If a placeholder file exists for a topic (e.g. an empty `rules.md`), ask the question that
 would fill it — and offer to draft that `.ai/` file from the answer as a side benefit
-(only write it if the user says yes; `.ai/` is his, skills go in `.claude/skills/`).
+(only write it if the user says yes; `.ai/` is theirs, skills go in `.claude/skills/`).
 
 Fold the answers into everything below.
 
