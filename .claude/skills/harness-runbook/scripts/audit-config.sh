@@ -22,8 +22,29 @@ else
 fi
 echo
 echo "-- Settings --"
+# Never print settings raw: `env` holds tokens (CLAUDE_CODE_OAUTH_TOKEN).
+redact() {
+  python3 - "$1" <<'PY'
+import json, re, sys
+SECRET = re.compile(r"token|secret|password|key|auth", re.I)
+def mask(o, under_env=False):
+    if isinstance(o, dict):
+        return {k: "<redacted>" if isinstance(v, str) and (under_env or SECRET.search(k))
+                else mask(v, under_env or k == "env") for k, v in o.items()}
+    if isinstance(o, list):
+        return [mask(v, under_env) for v in o]
+    return o
+try:
+    data = json.load(open(sys.argv[1]))
+except ValueError:
+    print("    (not valid JSON; not printed, may contain secrets)")
+    sys.exit(0)
+for line in json.dumps(mask(data), indent=2).splitlines():
+    print("    " + line)
+PY
+}
 for f in "$HOME/.claude/settings.json" "$PROJ/.claude/settings.json" "$PROJ/.claude/settings.local.json"; do
-  if [ -f "$f" ]; then echo "  $f:"; sed 's/^/    /' "$f"; else echo "  $f: (absent)"; fi
+  if [ -f "$f" ]; then echo "  $f:"; redact "$f"; else echo "  $f: (absent)"; fi
 done
 echo
 echo "-- Hooks configured --"
