@@ -77,6 +77,14 @@ for today's live problem (usage caps), use `harness-token-efficiency-campaign`.
   recipe 2, then give it a real payload (e.g. echo the audit script's line counts).
 - **You have a result when:** the marker proves the hook fires on every session start,
   and the payload survives a week without being annoying enough to remove.
+- **First result (2026-10-31):** the Stop-hook verification gate
+  (`.claude/hooks/stop_gate.py`) made Haiku check the real effect 3/3 vs 0/3 for control
+  and 0/3 for the same text as a prose rule (`experiments/stop-gate-test/RESULT.md`).
+  The working ingredient is naming the turn's recorded actions; a generic nudge verified
+  the wrong thing. Cost ~2.9x tokens on that task. v1.1 (same day) covers delegated work:
+  subagent actions reach the parent's nudge, and the parent checked 2/3 runs. Global
+  (`~/.claude/settings.json`) since 2026-10-31; the week-long kill-test (in `.ai/handoff.md`)
+  is open until 2026-11-07. Escalation enforcement is next.
 
 ## Ordering recommendation
 
