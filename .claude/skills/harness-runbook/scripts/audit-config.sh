@@ -48,7 +48,9 @@ for f in "$HOME/.claude/settings.json" "$PROJ/.claude/settings.json" "$PROJ/.cla
 done
 echo
 echo "-- Hooks configured --"
-grep -l '"hooks"' "$HOME/.claude/settings.json" "$PROJ/.claude/settings.json" "$PROJ/.claude/settings.local.json" 2>/dev/null || echo "  none"
+# Collect output, not grep's exit code: a missing settings file makes grep exit 2 even on a match.
+hooks="$(grep -l '"hooks"' "$HOME/.claude/settings.json" "$PROJ/.claude/settings.json" "$PROJ/.claude/settings.local.json" 2>/dev/null)"
+if [ -n "$hooks" ]; then echo "$hooks" | sed 's/^/  /'; else echo "  none"; fi
 echo
 echo "-- Skills (descriptions always load; bodies load on trigger) --"
 for d in "$PROJ/.claude/skills" "$HOME/.claude/skills"; do
