@@ -7,8 +7,9 @@ description: How config changes are classified and gated in this workspace — w
 
 Every change here alters how FUTURE Claude sessions behave, for this project or for all
 of the user's projects. That's the risk being gated: a bad application-code change breaks
-one feature; a bad harness change silently degrades every session after it — and this
-repo has **no git**, so there's no revert (see `harness-architecture-contract`).
+one feature; a bad harness change silently degrades every session after it. Repo files
+are in git since 2026-07-12, so revert via git; `~/.claude/` files outside
+`global-skills/` have no history at all.
 
 **When NOT to use this skill:** for what the config surfaces are, see
 `harness-reference`. For HOW to run the verification tests below, see
@@ -22,7 +23,7 @@ repo has **no git**, so there's no revert (see `harness-architecture-contract`).
 | B — per-project blast radius | Live `CLAUDE.md` / `CLAUDE.local.md`; `.claude/settings*.json`; hooks; editing an existing skill's `description` | Fresh-session test BEFORE calling it done (below), + token-cost check for anything always-loaded |
 | C — global blast radius | Anything under `~/.claude/` (global CLAUDE.md, user settings.json, user-level skills); changing the default model/effort | Explicit user sign-off in the current conversation, every time. Prior approval of a similar change does not carry over. |
 
-## Non-negotiables (with rationale — no incident history yet; these are seeded 2026-07-06 from Anthropic's guidance in CLAUDE.template.md plus the user's Pro-limit constraint)
+## Non-negotiables (with rationale — seeded 2026-07-06 from Anthropic's CLAUDE.md best-practices guidance plus the user's Pro-limit constraint)
 
 1. **Always-loaded text pays rent.** Before adding a line to any CLAUDE.md or any skill
    `description`, ask: "would removing this cause a mistake?" If no, don't add it.
@@ -35,7 +36,8 @@ repo has **no git**, so there's no revert (see `harness-architecture-contract`).
 3. **No unverified facts in skills.** A claim goes into a skill only if observed in a
    real session, verified against `claude --help`/local files, or explicitly labeled
    UNVERIFIED. Rationale: a wrong runbook misleads every future session that trusts it.
-4. **Templates stay inert.** Never rename `*.template.md` to a name auto-discovery
+4. **Templates stay inert.** Never rename `*.template.md` (e.g.
+   `global-skills/create-session-context/CLAUDE.template.md`) to a name auto-discovery
    picks up (`CLAUDE.md`, `CLAUDE.local.md`) without the user asking.
 5. **Hooks must be observable.** Any hook added must have a way to confirm it fired
    (e.g. append to a marker file) before it's trusted. Rationale: hooks fail silently;
@@ -59,12 +61,14 @@ diagnose with the symptom table in `harness-runbook` before touching the config 
 ## Recording
 
 Every Class B/C change gets one line in `.ai/backlog.md`: date, what, why, how verified.
-This is the repo's substitute for git history until `git init` happens.
+Git records what changed; the backlog line records why and how it was verified.
 
 ## Provenance and maintenance
 
-- Written 2026-07-06 (CC 2.1.193). Sources: `CLAUDE.template.md` usage-guidance block
-  (Anthropic best practices), user constraint from auto-memory (Pro plan, hourly caps).
-- No incidents behind these rules yet — replace "seeded" with real incidents in place
-  as they happen; the first real incident should also be logged in `.ai/backlog.md`.
+- Written 2026-07-06 (CC 2.1.193); updated 2026-10-31 (CC 2.1.281). Sources: Anthropic's
+  CLAUDE.md best-practices guidance (the usage block in
+  `global-skills/create-session-context/CLAUDE.template.md`), user constraint from
+  auto-memory (Pro plan, hourly caps).
+- First real incident behind rule 3: the advisor's "MUST" escalation rule was believed to
+  work, then measured not to fire (2026-09-07, the-advisor gotcha 28).
 - Re-verify the permission baseline: `cat .claude/settings.local.json`
