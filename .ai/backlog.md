@@ -1,6 +1,24 @@
 # Backlog
 
-Rolling log of recent sessions, newest first. Roll entries out to CLAUDE.md once 4+ stack up.
+Session history (newest first) and parked work. Not read at session start; pull it in when asked.
+
+## Last session: 2026-10-31 (cleanup)
+Fixed repo-wide drift found by the 2026-10-30 review. `current-task.md` folded into
+`handoff.md` and removed; `rules.md` took the current create-session-context template;
+CLAUDE.md lost its retracted "MUST"/directive-wording claims; the seven project skills
+dropped `CLAUDE.template.md` / "no git" / `current-task.md` references. Moved the three
+test stubs into `experiments/` with RESULT.md files, and the four global session skills
+into `global-skills/` (Class C, user-approved 2026-10-31) with symlinks back from
+`~/.claude/skills/`. Regenerated SKILLS_AVAILABLE.md. Verified with fresh Haiku
+`claude -p` runs: from an unrelated dir the init event listed all 4 symlinked skills; in
+this repo `/get-session-context` made exactly one Read, of `.ai/handoff.md`.
+
+## 2026-08-12 to 2026-10-30 (no backlog entries were written)
+Per the 2026-10-30 review: sessions in this folder were design work for other projects
+(Pocket Professor, Worklore, Readlore), not harness work. The 2026-09-20 cross-project
+session-context audit (4 files -> 3, lazy loading) ran in scratch_pad; this repo was one of
+the unmigrated projects until 2026-10-31. Advisor validation moved to the-advisor, where
+DoD check 3 came back negative on 2026-09-07 (its gotcha 28).
 
 ## Last session: 2026-08-11 (session 4)
 Long session that took the advisor/workhorse pattern from idea to a published plugin.
@@ -15,6 +33,7 @@ June 15 2026 change was paused); the CLI login lapses unless `CLAUDE_CODE_OAUTH_
 in the shell profile. Corrected an overclaim before publishing — proactive escalation is
 only proven against seeded prompts containing the rule's own trigger words. Open: DoD
 checks 3-5, then a second-machine install.
+(Superseded 2026-09-07: directive wording did not make escalation fire; see the-advisor gotcha 28.)
 
 ## Last session: 2026-07-12 (session 3)
 Confirmed the session-context trio still orients correctly on a cold read (no changes).
@@ -37,4 +56,12 @@ matched). Corrected an earlier wrong claim that `.ai/` is "often gitignored" —
 `git ls-files` it's tracked in job-apply, oneness-suite, and alitahir6001.github.io. Updated
 `SKILLS_AVAILABLE.md` to reflect the rename. Trio is now considered done; no open task.
 
+## 2026-07-08 (session 1, from CLAUDE.md "Recent context")
+Rebuilt the three session-context skills in ~/.claude/skills/ and smoke-tested them against this repo.
+
 ## Parked items (not session-bound)
+- Hook ideas (2026-08-13), each needs a marker-file proof before it is trusted:
+  - Config regression tester: replay fixed prompts via `claude -p --output-format stream-json`
+    and assert on `tool_use` entries, not prose.
+  - Stop-hook verification gate: block "done" until a verification command has run.
+  - Destructive-command rail: PreToolUse guard on rm/mv/overwrite with an undo ledger.
