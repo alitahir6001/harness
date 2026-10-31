@@ -43,9 +43,15 @@ rule working = a couple of lines; a tutorial essay = rule not loading or drowned
 Give the hook command a side effect you can check:
 `"command": "... && echo fired-$(date +%s) >> /tmp/hook-marker"` — run a session that
 should trigger the event, then `cat /tmp/hook-marker`. No marker = hook not firing;
-debug registration before debugging the hook's real payload. No hooks exist here yet
-(2026-07-06); this is the mandatory first test when one is added
-(`harness-change-control`, non-negotiable 5).
+debug registration before debugging the hook's real payload. This is the mandatory
+first test for any hook (`harness-change-control`, non-negotiable 5). Real example:
+`.claude/hooks/stop_gate.py` logs every call to `~/.claude/stop-gate/marker.log`; its
+smoke run showed the hook firing correctly while its v0 message still misdirected the
+model, so check the marker AND the behavior. Lines carry `session`, `action`, `agent_id`/
+`agent_type` (set on subagent calls) and `cwd`; `experiments/stop-gate-test/field_report.py`
+joins them to transcripts for per-project nudge counts, follow-through and extra tokens.
+Read what the hook actually injected from the transcript's `hook_additional_context` row:
+that's how the v1 truncated-label bug was found while the marker looked healthy.
 
 ### 3. "Does my skill trigger?"
 Two-step: (a) explicit `/<name>` — proves the file parses and loads; (b) fresh session
