@@ -14,34 +14,41 @@ description: Operational runbook for the harness workspace — setup from scratc
 
 1. Prereq: Claude Code CLI ≥ 2.1.193 on PATH (`claude --version`).
 2. `cd` into this repo; start `claude`. Nothing else to install — there is no code.
-3. Orient: run the audit script (below), then read `.ai/handoff.md` and
-   `.ai/current-task.md` for live state.
+3. Orient: run the audit script (below), then read `.ai/handoff.md` (the only live-state
+   file; `rules.md` and `backlog.md` load on demand).
+   New machine: recreate the global-skill symlinks, one per dir in `global-skills/`:
+   `ln -s "$PWD/global-skills/<name>" ~/.claude/skills/<name>`.
 4. Auto-memory for this project lives at
    `~/.claude/projects/-Users-pakfro-home-Desktop-projects-harness/memory/` —
    note the path flattens BOTH `/` and `_` to `-`. It won't exist on a new machine;
    the skills and `.ai/` are the portable copy of anything load-bearing.
 
-## Config catalog (everything that shapes a session here — enumerated by audit, 2026-07-06)
+## Config catalog (everything that shapes a session here — enumerated by audit, 2026-10-31)
 
 | File | Effect |
 |---|---|
-| `~/.claude/CLAUDE.md` (7 lines) | Global response-style rules, every turn, every project |
-| `~/.claude/settings.json` | `model: opus`, `effortLevel: high`, `tui: fullscreen` |
-| `.claude/settings.local.json` | Project permission allows (WebSearch, anthropic.com fetch, accumulated read-only approvals) |
+| `~/.claude/CLAUDE.md` (113 lines) | Global response-style and working rules, every turn, every project |
+| `~/.claude/settings.json` | `env` (OAuth token, never print raw), `effortLevel: medium`, `tui: fullscreen`, the-advisor plugin enabled + its `pluginConfigs`; no `model` key |
+| `CLAUDE.md` (40 lines) | Project per-turn rules and gotchas |
+| `.claude/settings.local.json` | Project permission allows (WebSearch, anthropic.com fetch, accumulated approvals) |
 | `.claude/skills/*/SKILL.md` | This library — descriptions always loaded, bodies on trigger |
-| `~/.claude/skills/build-skill-library/` | User-level skill that generated this library |
-| memory `MEMORY.md` + files | User profile + learning goal, loaded each session |
-| `CLAUDE.template.md` | INERT — template only, never auto-loaded |
-| Hooks, subagents, MCP, project CLAUDE.md | None configured (as of 2026-07-06) |
+| `~/.claude/skills/<name>` → `global-skills/<name>` | Symlinks: create/get/update-session-context, build-skill-library. `grill-me` is a plain dir, not in the repo |
+| Plugin `the-advisor@the-advisor` (0.5.2, user scope) | `advisor` agent, `advisor` MCP server (`consult_advisor`), skills consult/second-opinion/advisor-model/doctor. Source: `~/Desktop/projects/the-advisor` |
+| memory `MEMORY.md` (6 lines) + 6 files | User profile, learning goal, working-style feedback; index loaded each session |
+| Hooks, project subagents | None configured (as of 2026-10-31) |
 
-## Diagnostics (read-only, verified working 2026-07-06)
+## Diagnostics (read-only, verified working 2026-10-31)
 
 ```bash
-# Full config audit: layers, line counts (token tax), settings, skills, hooks
+# Full config audit: layers, line counts (token tax), settings (secrets redacted), skills, hooks
 bash .claude/skills/harness-runbook/scripts/audit-config.sh
 
 # Lint this skill library: frontmatter, name/dir match, provenance sections
 bash .claude/skills/harness-runbook/scripts/lint-skills.sh
+
+# Advisor consult log (live: ~/.the-advisor/consult-log.jsonl, from 2026-09-07; older history
+# in ~/.claude/plugins/data/the-advisor-*/ and ~/.claude/advisor/; ADVISOR_LOG=<path> reads one)
+python3 ~/Desktop/projects/the-advisor/server/consults.py --stats
 ```
 
 ## Symptom → triage
@@ -54,7 +61,7 @@ bash .claude/skills/harness-runbook/scripts/lint-skills.sh
 | Hook seems not to fire | No hooks exist yet here. When one does: give it a marker-file side effect and check the marker (`harness-evidence-and-analysis`, recipe 2). |
 | Behavior differs from another project | Diff the layers: global CLAUDE.md and user settings apply everywhere; run the audit in both projects and compare. |
 | Hitting the 5-hour usage cap | Go to `harness-token-efficiency-campaign` — don't improvise. |
-| Config seems loaded but you can't tell | `claude --bare -p "..."` strips CLAUDE.md/hooks/memory; if behavior changes vs plain `claude -p`, a config layer is responsible — bisect by layer. |
+| Config seems loaded but you can't tell | `claude --bare -p "..."` strips CLAUDE.md/hooks/memory; if behavior changes vs plain `claude -p`, a config layer is responsible — bisect by layer. Caveat: `--bare` reads only `ANTHROPIC_API_KEY`, never OAuth (`claude --help`, 2.1.281), so it can't auth on this key-less machine; use the stream-json init event to see what loaded instead. |
 
 ## Validation bar (what counts as evidence in THIS repo)
 
@@ -71,6 +78,8 @@ There are no tests, so the bar is behavioral, in a fresh session:
 
 ## Provenance and maintenance
 
-- Written 2026-07-06, CC 2.1.193. Both scripts run and pass on that date.
+- Written 2026-07-06, CC 2.1.193; updated 2026-10-31, CC 2.1.281. Both scripts run and
+  pass on that date.
 - Config catalog drifts: re-run `audit-config.sh` and update the table when it disagrees.
-- Global CLAUDE.md line count: `wc -l ~/.claude/CLAUDE.md` (was 7).
+- Global CLAUDE.md line count: `wc -l ~/.claude/CLAUDE.md` (113 on 2026-10-31).
+- Symlinks intact: `ls -l ~/.claude/skills/`
