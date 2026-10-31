@@ -1,8 +1,9 @@
 # Handoff — live state snapshot
 
 ## Last updated
-2026-10-31 (cleanup session). Repo-wide drift fix: session files moved to the 3-file
-layout, CLAUDE.md and the seven project skills brought up to date.
+2026-10-31 (review session, last of three that day). Earlier: the cleanup session
+(3-file layout, skills) and the stop-gate session (gate v1.1 global, field report).
+This session dropped Recent context from the global CLAUDE.md template.
 
 ## Current state
 The advisor pattern lives in its own repo (`~/Desktop/projects/the-advisor`); this repo is
@@ -21,15 +22,30 @@ None. The advisor validation task is closed here:
 
 ## Open threads
 - [ ] Pin `the-advisor` and `harness` on the GitHub profile - user (unverifiable from here)
-- [ ] Commit this cleanup - user
+- [ ] Delete `~/.claude/settings.json.bak-stopgate-20261031-160521` once the kill-test is
+  settled - user
 - [ ] Originals of the 4 symlinked skills sit in `~/.claude/skills-aside-2026-10-31/`;
   remove once satisfied - user. `grill-me` is third-party and stays out of the repo.
-- [ ] `global-skills/create-session-context/CLAUDE.template.md` header comment and
-  `build-skill-library` Phase 1 still describe the 4-file `.ai/` read order (Class C edit)
+- [x] `CLAUDE.template.md` header and `build-skill-library` Phase 1 moved to the 3-file
+  layout; template's Recent context section dropped, history goes to `backlog.md`
+  (2026-10-31, user-approved Class C)
 
 ## Next recommended step
-Pick a first hook from `harness-research-frontier` Frontier 3: an escalation-enforcement
-hook or the Stop-hook verification gate (both motivated by gotcha 28).
+**Stop-gate kill-test, due 2026-11-07.** The gate (v1.1) is global since 2026-10-31
+(`~/.claude/settings.json` → `.claude/hooks/stop_gate.py` in this repo; results in
+`experiments/stop-gate-test/RESULT.md`). Run `python3 experiments/stop-gate-test/field_report.py`,
+then open 10 nudge continuations in the transcripts. Proposed criteria (the user sets the
+final numbers):
+- **Remove** (`python3 .claude/hooks/install_global.py --uninstall`) if none of the 10 caught
+  a real problem.
+- **Tune** if most nudges follow read-only turns (`git status`, `ls`, and so on: candidate
+  fix, skip read-only Bash), or if extra tokens per nudge are too costly. Cost scales with
+  context: ~25k input-side on a fresh turn, ~310k per extra request in a long Opus session.
+- **Keep** otherwise.
+Baseline on 2026-10-31: 4 nudges, 3/4 followed by a tool call.
+Fragility: the command points into this repo. Moving or renaming it silences the gate
+everywhere (the `[ -f ]` guard makes that a quiet exit 1, not a blocking exit 2).
+Next build after the kill-test: escalation enforcement.
 
 ## Out of scope
 Advisor plugin work (edit the-advisor repo); rerunning the stub tests in place (copy them out first).
