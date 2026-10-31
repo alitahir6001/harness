@@ -5,8 +5,9 @@ description: Claude Code harness domain reference — config layers (CLAUDE.md, 
 
 # Claude Code harness reference (as it applies to THIS user)
 
-Facts verified 2026-07-06 against Claude Code **2.1.193** on this machine (no git in this
-repo, so no commit hashes). "UNVERIFIED" = from documentation/training, not observed here.
+Facts verified 2026-07-06 against Claude Code **2.1.193** on this machine; settings, flags
+and layers re-checked 2026-10-31 on **2.1.281**. "UNVERIFIED" = from documentation/training,
+not observed here.
 
 **When NOT to use this skill:** for making a change to config, go to
 `harness-change-control` first. For step-by-step commands and diagnostics, use
@@ -20,26 +21,26 @@ repo, so no commit hashes). "UNVERIFIED" = from documentation/training, not obse
 | A rule Claude must follow EVERY message | `CLAUDE.md` (right level, see below) | Loaded every turn — also a per-turn token tax, so keep tiny |
 | Knowledge needed only for certain tasks | A skill in `.claude/skills/` | Body loads only when triggered; only the `description` is always in context |
 | A deterministic "always do X on event Y" | A hook in settings.json | The harness executes it — doesn't rely on the model remembering |
-| A delegated worker with its own context | A subagent (`.claude/agents/*.md`, UNVERIFIED format — none installed here) | Isolated context window; costs a cold start |
+| A delegated worker with its own context | A subagent (`.claude/agents/*.md`; example: `the-advisor/agents/advisor.md`, via the plugin) | Isolated context window; costs a cold start |
 | Facts that persist across sessions | Auto-memory (see below) | Claude maintains it; index loads each session |
 
-## CLAUDE.md layers (verified via CLAUDE.template.md in this repo, which encodes Anthropic's guidance)
+## CLAUDE.md layers
 
-- `~/.claude/CLAUDE.md` — all projects (this user HAS one: response-style prefs)
-- `./CLAUDE.md` — project root, shared via git
-- `./CLAUDE.local.md` — personal, gitignored
-- `subdir/CLAUDE.md` — pulled in when Claude works in that subdir
-- Import syntax: `@path/to/file.md`
-- Target under ~30 lines. Every line is reprocessed every turn. If a rule is ignored,
-  the file is probably too long — prune, don't add emphasis.
-- `CLAUDE.template.md` in this repo is deliberately NOT named `CLAUDE.md` so
-  auto-discovery never loads it (see `harness-architecture-contract`).
+- `~/.claude/CLAUDE.md` — all projects (observed: this user has one, 113 lines)
+- `./CLAUDE.md` — project root, shared via git (observed: this repo has one)
+- `./CLAUDE.local.md` — personal, gitignored (UNVERIFIED, per docs)
+- `subdir/CLAUDE.md` — pulled in when Claude works in that subdir (UNVERIFIED, per docs)
+- Import syntax: `@path/to/file.md` (UNVERIFIED, per docs)
+- Keep it short: every line is reprocessed every turn. If a rule is ignored, the file is
+  probably too long — prune, don't add emphasis (Anthropic best-practices guidance).
+- An acknowledged rule is not a followed rule: verify by `tool_use` in a fresh session
+  (CLAUDE.md gotcha 3).
 
 ## settings.json layers (keys verified from real files on this machine)
 
 | File | Scope | Observed contents here |
 |---|---|---|
-| `~/.claude/settings.json` | user, all projects | `model: opus`, `effortLevel: high`, `tui: fullscreen` |
+| `~/.claude/settings.json` | user, all projects | `env` (holds the OAuth token: never print raw), `effortLevel: medium`, `tui: fullscreen`, `enabledPlugins`, `extraKnownMarketplaces`, `pluginConfigs`; no `model` key (2026-10-31) |
 | `.claude/settings.json` | project, shared | none in this repo |
 | `.claude/settings.local.json` | project, personal | `permissions.allow`: WebSearch, `WebFetch(domain:www.anthropic.com)`, plus read-only allows accumulated from approved permission prompts (the harness persists approvals here) |
 
@@ -69,28 +70,32 @@ writing your first hook: https://code.claude.com/docs/en/hooks
 - It lives OUTSIDE the repo — it does not travel with the project. Durable project
   knowledge belongs in the repo (skills or `.ai/`), not only in memory.
 
-## CLI flags worth knowing (verified via `claude --help`, 2.1.193)
+## CLI flags worth knowing (verified via `claude --help`, 2.1.281)
 
 - `-p/--print` — non-interactive one-shot; the cheapest way to test config in a fresh
   session (see `harness-evidence-and-analysis`)
+- `--output-format stream-json --verbose` (with `-p`) — event stream; `tool_use` entries
+  are the evidence of behavior
 - `--model`, `--effort`, `--agent` — per-session overrides of settings.json
-- `--bare` — skips hooks, auto-memory, CLAUDE.md auto-discovery; good for isolating
-  whether a config layer causes a behavior
-- `-c/--continue`, `--resume`, `--fork-session` — session continuity
-- `--allowedTools`, `--append-system-prompt`, `--add-dir`
+- `--bare` — skips hooks, plugin sync, auto-memory, CLAUDE.md auto-discovery. Auth is
+  `ANTHROPIC_API_KEY` or `apiKeyHelper` only (OAuth never read), so it can't run on this
+  key-less machine
+- `-c/--continue`, `-r/--resume`, `--fork-session` — session continuity
+- `--allowedTools`, `--append-system-prompt`, `--add-dir`, `--settings`
 
 ## This user's operating constraint (from memory, 2026-07-06)
 
-Pro plan; regularly hits the rolling 5-hour usage limit. Default model is **opus with
-high effort** (verified in `~/.claude/settings.json`) — the single biggest burn lever.
-Everything in this library is written token-cost-first because of this. See
+Pro plan; regularly hits the rolling 5-hour usage limit. On 2026-07-06 the default was
+opus at high effort; on 2026-10-31 `~/.claude/settings.json` has no `model` key and
+`effortLevel: medium`. Model/effort is still the single biggest burn lever. Everything in
+this library is written token-cost-first because of this. See
 `harness-token-efficiency-campaign`.
 
 ## Provenance and maintenance
 
-- CLI version: `claude --version` (was 2.1.193 on 2026-07-06)
+- CLI version: `claude --version` (2.1.281 on 2026-10-31)
 - Flags: `claude --help`
-- User settings: `cat ~/.claude/settings.json`
+- User settings (redacted): `bash .claude/skills/harness-runbook/scripts/audit-config.sh`
 - Skill format: `head -5 ~/.claude/skills/build-skill-library/SKILL.md`
 - Hook events (UNVERIFIED here): check https://code.claude.com/docs/en/hooks
 - Memory layout: `ls ~/.claude/projects/-Users-pakfro-home-Desktop-projects-harness/memory/`
