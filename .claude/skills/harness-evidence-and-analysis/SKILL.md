@@ -26,7 +26,9 @@ claude --bare -p "probe task here"   # same, with CLAUDE.md/hooks/memory strippe
 The pair gives you a bisection for free: plain vs `--bare` differ → some config layer
 causes the behavior; then reintroduce layers one at a time (`--add-dir`,
 `--append-system-prompt`, `--settings`) to find which. (Flags verified against
-`claude --help`, 2.1.193.)
+`claude --help`, 2.1.193 and 2.1.281.) Caveat: `--bare` authenticates only with
+`ANTHROPIC_API_KEY`/`apiKeyHelper`, never OAuth, so on this key-less machine the bare
+half can't run; bisect by copying the project out and adding layers back instead.
 
 ## Recipes
 
@@ -63,17 +65,28 @@ Ask in order, stop at first failure: **Loaded?** (audit script / `/context`) →
 **Findable?** (is the file over ~30 lines / is the rule buried?) → **Directive?**
 (phrased as an instruction, not background?) → **Contradicted?** (does another layer
 say otherwise — check global vs project). Fixing a later link while an earlier one is
-broken wastes the effort.
+broken wastes the effort. All four can pass and the rule still not fire: the advisor's
+"MUST" rule was loaded, directive and uncontradicted, and the model acknowledged it, then
+made zero calls (2026-09-07, the-advisor gotcha 28). Past that point, the fix is a hook.
+
+### 6. A test can contaminate its own result
+The probe's framing can force the behavior on its own. Real case (2026-09-07,
+`experiments/rules-ab-test/`): an A/B on a "verify the downstream effect" rule came out
+inconclusive twice, because asking "did it work?" made the model check carefully with or
+without the rule. The real failures happened mid-task, when nobody asked. Design the
+probe so the behavior is a side effect of an unrelated task, never the question itself.
+Also run stubs outside this repo: in place they inherit its `CLAUDE.md` and skills.
 
 ## Worked-example honesty
 
-This repo has one day of history (2026-07-06). Recipes 4's example is real; the others
-are constructed from that day's verification work, not from accumulated incidents.
+Recipe 4's example and recipes 5–6's 2026-09-07 cases are real; recipes 1–3 are
+constructed from 2026-07-06 verification work, not from accumulated incidents.
 Replace them with real cases as they occur — a recipe with a real local failure attached
 teaches far better. Log candidates in `.ai/backlog.md`.
 
 ## Provenance and maintenance
 
-- Written 2026-07-06, CC 2.1.193. Flags re-check: `claude --help | grep -E 'bare|print|append'`.
+- Written 2026-07-06, CC 2.1.193; updated 2026-10-31, CC 2.1.281. Flags re-check:
+  `claude --help | grep -E 'bare|print|append'`.
 - Global-CLAUDE.md probe example depends on `~/.claude/CLAUDE.md` keeping its
   short-answers rule — re-check: `cat ~/.claude/CLAUDE.md`.
