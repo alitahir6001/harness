@@ -88,7 +88,7 @@ Scaffold the **current directory** as a project root: create the `.ai/` memory f
    ## Parked items
    ```
 
-4. **Create root `CLAUDE.md` from the template.** Copy `~/.claude/skills/create-session-context/CLAUDE.template.md` to `./CLAUDE.md`. Fill in only what you can confidently infer from the directory (project name; a one-line "what this project is" if obvious from a README or `package.json` description). Leave everything else as bracketed placeholders and keep the guidance comment block so the user can prune later — including the note about small projects skipping File map / Architecture / Recent context. **Cap at 12 KB** (bytes, not lines) — this file is loaded on every single session, so it is the most expensive text in the project.
+4. **Create root `CLAUDE.md` from the template.** Copy `~/.claude/skills/create-session-context/CLAUDE.template.md` to `./CLAUDE.md`. Fill in only what you can confidently infer from the directory (project name; a one-line "what this project is" if obvious from a README or `package.json` description). Leave everything else as bracketed placeholders and keep the guidance comment block so the user can prune later — including the note about small projects skipping File map / Architecture. **Cap at 12 KB** (bytes, not lines) — this file is loaded on every single session, so it is the most expensive text in the project.
 
 5. **Report + reminder.** List the files created (do not echo their full contents). Remind the user: run `build-skill-library` *later*, once the project has real code — not now. `handoff.md` gets filled at the first task boundary via `update-session-context`.
 
