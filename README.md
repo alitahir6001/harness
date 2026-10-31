@@ -1,6 +1,6 @@
 # harness
 
-A working notebook for making coding agents behave — Claude Code's configuration surface
+A working notebook for making coding agents behave: Claude Code's configuration surface
 treated as something to test rather than guess at.
 
 This is a **workspace, not an application**. There is no build and no test suite. What
@@ -25,13 +25,13 @@ claude -p "<prompt>" --model haiku --output-format stream-json --verbose
 ```
 
 Then parse the stream for actual `tool_use` entries. Testing against a small model is
-deliberate — rules that only work on a frontier model aren't rules, they're suggestions
+deliberate: rules that only work on a frontier model aren't rules, they're suggestions
 that happened to land.
 
 ## What's here
 
 ```
-.claude/skills/     seven project skills — the durable knowledge layer
+.claude/skills/     seven project skills, the durable knowledge layer
 .ai/                live session state (handoff, current task, backlog, rules)
 CLAUDE.md           per-turn rules only
 SKILLS_AVAILABLE.md catalog of stock + custom skills
@@ -44,30 +44,53 @@ an agent reads three versions of the same thing and picks the wrong one.
 
 ## Findings worth keeping
 
-A few results from testing that generalize past this repo:
+A few results from testing that generalize past this repo.
 
-- **Directive wording beats polite wording.** "You MUST consult BEFORE finalizing…"
-  produces the behavior; "consult when appropriate" does not. Verified against a small
-  workhorse model, where the gap is widest.
-- **Placement decides whether a rule fires.** Escalation policy lives in a subagent's
-  description, because agent descriptions are always in context while MCP tool
-  descriptions can be deferred — and a deferred description can't drive proactive
-  behavior.
+**Behavior**
+
+- **A model agreeing to a rule is not evidence it will follow it.** An escalation rule
+  ("You MUST get a second opinion before finalizing...") was tested in a fresh session on
+  a project that never mentioned the advisor. The model read the rule, said it would act
+  on it, then made zero tool calls on a real hard-to-reverse decision. An earlier test had
+  passed, but its prompts contained the rule's own trigger words. Stronger wording didn't
+  close the gap; a deterministic hook is the remaining option, not yet built or tested.
+- **Check that a rule is visible before testing whether it works.** MCP tool descriptions
+  can be deferred out of context, and Task-tool subagents never see agent descriptions at
+  all, only the bare tool name. A rule the model can't see fails for a different reason
+  than one it ignores.
+- **A test can contaminate its own result.** Two A/B runs on whether a written "verify
+  the downstream effect" rule changed behavior were both inconclusive: asking "did it
+  work?" made the model check carefully with or without the rule. The real failures had
+  happened during unrelated work, when nobody asked.
 - **Duplicate installs compete.** Providing the same agent both manually and via a plugin
   yielded two advisor agents and two MCP servers in one session. One source, or neither.
+
+**Cost** (measured September 2026, from an audit of 171 sessions)
+
+- **Session memory should load lazily.** Reading every session file at startup cost about
+  49,000 tokens per session in the largest project. Reading only the handoff, pulling
+  rules and backlog on demand, and cutting duplicated sections from `CLAUDE.md` brought it
+  to about 15,000, a 69% cut.
+- **Write the handoff at a task boundary, not at the end.** Late wrap-ups cost about twice
+  the output of early ones (~11,200 vs ~5,700 tokens), and the gap held when
+  sessions were matched on workload.
+- **Transcript token counts double unless deduped.** Claude Code's JSONL stores one
+  response as several records, each repeating the same `usage` object. Dedupe by
+  `requestId`. Dense markdown also ran about 2.5 bytes per token, not the usual 4.
 
 ## The Advisor
 
 The advisor/workhorse pattern started here and has **graduated into its own repo**:
 
-> **[the-advisor](https://github.com/alitahir6001/the-advisor)** — a Claude Code plugin
-> that routes architectural and hard-to-reverse decisions to a stronger model for a second
-> opinion, while cheap models carry the everyday workload.
+> **[the-advisor](https://github.com/alitahir6001/the-advisor)**: a Claude Code plugin
+> that lets a cheap workhorse model get a second opinion from a stronger advisor (Claude,
+> Gemini, GPT or a local model) on hard-to-reverse decisions, through `/consult`.
 
 `experiments/advisor-pattern/` is a frozen snapshot of the original development version.
-It is kept for history and **is not what runs** — edit the plugin repo instead.
+It is kept for history and **is not what runs**. Edit the plugin repo instead.
 
 ## Status
 
-Advisor pattern shipped. Current work is cross-project validation, then confirming the
-setup reproduces on a second machine.
+Advisor pattern shipped and lives in its own repo. Its proactive-escalation test came back
+negative (see Findings), so it is invoked on demand. This repo's own session files have
+not been moved to the leaner layout yet.
