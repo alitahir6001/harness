@@ -16,7 +16,7 @@ Problem (from memory, confirmed 2026-07-06): Pro plan, regularly hits the rollin
 ## Phase 0 — Baseline (no baseline, no campaign)
 
 Measured baseline (September 2026, audit of 171 sessions across the user's projects):
-- Session startup in job-apply: ~49k tokens reading every `.ai/` file eagerly → ~15k
+- Session startup in the largest project: ~49k tokens reading every `.ai/` file eagerly → ~15k
   after lazy loading (handoff only) and CLAUDE.md dedupe, a 69% cut.
 - Late wrap-ups cost ~2× the output of early ones (~11,200 vs ~5,700 tokens), holding
   when matched on workload. Write the handoff at a task boundary.
