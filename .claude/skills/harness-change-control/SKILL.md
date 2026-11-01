@@ -19,7 +19,7 @@ are in git since 2026-07-12, so revert via git; `~/.claude/` files outside
 
 | Class | What | Gate |
 |---|---|---|
-| A — free | `.ai/` edits; new skill drafted as candidate; anything in scratch dirs | None. Note it in `.ai/backlog.md`. |
+| A — free | `.ai/` edits; new skill drafted as candidate; anything in scratch dirs | None. Note it in `.ai/history.md`. |
 | B — per-project blast radius | Live `CLAUDE.md` / `CLAUDE.local.md`; `.claude/settings*.json`; hooks; editing an existing skill's `description` | Fresh-session test BEFORE calling it done (below), + token-cost check for anything always-loaded |
 | C — global blast radius | Anything under `~/.claude/` (global CLAUDE.md, user settings.json, user-level skills); changing the default model/effort | Explicit user sign-off in the current conversation, every time. Prior approval of a similar change does not carry over. |
 
@@ -60,8 +60,8 @@ diagnose with the symptom table in `harness-runbook` before touching the config 
 
 ## Recording
 
-Every Class B/C change gets one line in `.ai/backlog.md`: date, what, why, how verified.
-Git records what changed; the backlog line records why and how it was verified.
+Every Class B/C change gets one line in `.ai/history.md`: date, what, why, how verified.
+Git records what changed; the history line records why and how it was verified.
 
 ## Provenance and maintenance
 
