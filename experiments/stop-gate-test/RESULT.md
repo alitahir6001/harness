@@ -100,7 +100,7 @@ told the user the deploy failed. Run 6 got the right label but "verified" by com
 mtimes and declared success: a model miss the gate can't fix. 0/6 subagent-prompt hook runs
 corrected the CHANGELOG, same as the direct-prompt result.
 
-**SubagentStop:** see the decision line in `.ai/backlog.md`. The parent's Stop already sees
+**SubagentStop:** see the decision line in `.ai/history.md`. The parent's Stop already sees
 every subagent mark (6/6), so the gate covers delegated work without it.
 
 Batch totals (`modelUsage`): A + A0 755,156 cache-read, 93,374 cache-write, 320 input, 8,889
