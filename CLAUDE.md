@@ -20,6 +20,7 @@ Live state: `.ai/handoff.md`.
   `experiments/advisor-pattern/` is a frozen dev snapshot, NOT what runs.
 - The advisor's "MUST get a second opinion" escalation was tested and retracted
   (the-advisor CLAUDE.md gotcha 28). Don't re-add mandate wording expecting it to fire.
+- Design decisions: docs/adr/ (index: docs/adr/README.md). Write new ones with the write-adr skill.
 
 ## Active gotchas
 1. Nested `claude -p` fails unless `CLAUDE*` env vars are stripped from the subprocess
