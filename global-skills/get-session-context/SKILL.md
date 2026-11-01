@@ -19,6 +19,7 @@ Orient on an existing project by reading its memory files, then tell the user tw
    - **`.ai/rules.md`** — when you're about to change code, or when handoff points at a rule.
    - **root `CLAUDE.md`** — the harness usually loads this on its own. Read it only if you can't see it and you need architecture or gotchas.
    - **`.ai/backlog.md`** — only when the user asks about parked work, or asks you to add something to it.
+   - **`.ai/history.md`** — only when the user asks about past work or why something was decided.
    - **`.ai/current-task.md`** — legacy layout only. If the project still has one and `handoff.md` doesn't name the active task, read it too.
    - **a project skill** — for subsystem depth (a runbook, a resume/PDF skill, an architecture contract). Their descriptions are already in context; load the one that matches the work.
 
