@@ -96,6 +96,6 @@ Frontier 1 waits on its Step 0 billing answer.
 
 - Written 2026-07-06, CC 2.1.193, from user-confirmed goals + auto-memory; updated
   2026-10-31, CC 2.1.281. No frontier experiment has run yet; delete or update frontiers
-  as results land (log in `.ai/backlog.md`, promote findings per
+  as results land (log in `.ai/history.md`, promote findings per
   `harness-architecture-contract` decision 3).
 - Agent SDK status/auth: re-check docs before Frontier 1 — the SDK moves fast.
