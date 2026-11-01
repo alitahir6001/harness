@@ -20,7 +20,7 @@ now concretely `global-skills/`. (Roles confirmed by the user, 2026-07-06.)
 | Store | Holds | Loaded |
 |---|---|---|
 | `.claude/skills/` | Durable, verified knowledge and procedures | On trigger only |
-| `.ai/` | Live state: `handoff.md` (read at start), `rules.md` + `backlog.md` (on demand) | When Claude reads it |
+| `.ai/` | Live state: `handoff.md` (read at start), `rules.md` + `backlog.md` + `history.md` (on demand) | When Claude reads it |
 | `CLAUDE.md` (any level) | Only rules needed EVERY message | Every turn (token tax) |
 
 **Invariant: one home per fact.** A fact lives in exactly one store; the others point to
@@ -67,7 +67,7 @@ in CLAUDE.md is a recurring per-turn cost (user is on Pro and hits hourly limits
   and won't travel with this folder. Anything load-bearing from memory has been copied
   into these skills or `.ai/`.
 - **`.ai/` history is seeded, not accumulated.** The scaffold was written 2026-07-06
-  from one session's context. Treat early backlog entries as reconstruction, not
+  from one session's context. Treat early history entries as reconstruction, not
   incident record.
 
 ## Provenance and maintenance
