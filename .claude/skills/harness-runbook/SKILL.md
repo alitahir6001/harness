@@ -81,7 +81,7 @@ There are no tests, so the bar is behavioral, in a fresh session:
 3. **Claims get labels.** Observed / verified-against-CLI / UNVERIFIED — anything
    entering a skill must carry one (rule 3 in `harness-change-control`).
 4. **Measured, never judged by eye**, when the claim is about cost: line counts and
-   session counts from `audit-config.sh` and `.ai/backlog.md`, not vibes.
+   session counts from `audit-config.sh` and `.ai/history.md`, not vibes.
 
 ## Provenance and maintenance
 
