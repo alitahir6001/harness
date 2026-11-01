@@ -6,6 +6,7 @@ At session start, read `handoff.md` ONLY. Everything else loads on demand.
 - **handoff.md** - live state snapshot, and the only file read at startup. Rewrite in place, never append like a log. Cap 8 KB.
 - **rules.md** - this file. Read when you're about to change code, or when handoff points at a rule. Edit only on an explicit "add a project rule: X".
 - **backlog.md** - parked work. Read only when the user asks about it or asks you to add to it. Never read at startup.
+- **history.md** - session logs, change log, measurement logs. Never read at startup; read only when asked about past work.
 - Permanent gotchas / non-obvious behavior that stays true for the project's life -> root `CLAUDE.md`, not here.
 - Subsystem depth (how the renderer works, what the pipeline costs) -> a project skill under `.claude/skills/`, not here. Skill descriptions sit in context for ~20 tokens each and the body loads only when relevant.
 
