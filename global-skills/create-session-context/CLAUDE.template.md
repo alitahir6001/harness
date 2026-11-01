@@ -59,7 +59,7 @@ current state rather than duplicating it here.]
     section above — What this project is / Stack / a "Key behaviors" list / Out of
     scope / Known constraints is often enough. Skip File map and Architecture
     if there's not enough project to say anything non-obvious in them.
-  - Session history goes in .ai/backlog.md, not here.
+  - Session history goes in .ai/history.md, not here.
 
   Placement:
   - ./CLAUDE.md            project root, shared via git
