@@ -15,7 +15,7 @@ Orient on an existing project by reading its memory files, then tell the user tw
 
 1. **Read `.ai/handoff.md`. That's it.** One file. Use the Read tool on the path directly rather than a Bash existence check (`ls`/`test`) first — a missing file is normal and the Read tool reports it plainly instead of surfacing a misleading non-zero exit in the UI.
 
-   Do NOT eagerly read `CLAUDE.md`, `.ai/rules.md`, or `.ai/backlog.md`. Measured 2026-09-20: across the user's 12 projects with this system, reading the full set costs 5k–49k tokens per session start (job-apply alone is ~49,000), and most of it goes unused for the session's actual work. Those files are still there and still authoritative — pull them in when you need them:
+   Do NOT eagerly read `CLAUDE.md`, `.ai/rules.md`, or `.ai/backlog.md`. Measured 2026-09-20: across the user's 12 projects with this system, reading the full set costs 5k–49k tokens per session start (the largest project alone is ~49,000), and most of it goes unused for the session's actual work. Those files are still there and still authoritative — pull them in when you need them:
    - **`.ai/rules.md`** — when you're about to change code, or when handoff points at a rule.
    - **root `CLAUDE.md`** — the harness usually loads this on its own. Read it only if you can't see it and you need architecture or gotchas.
    - **`.ai/backlog.md`** — only when the user asks about parked work, or asks you to add something to it.
