@@ -3,8 +3,10 @@
 Session logs, change logs and archived history, moved out of backlog.md 2026-11-01. Never read at session start; read only when asked about past work.
 
 ## 2026-11-01 (change log)
-- Class C: new global skill `write-adr` (global-skills/write-adr, symlinked into ~/.claude/skills). Why: user chose per-decision MADR ADRs in docs/adr/ for the-advisor, Pocket Professor Playground, harness, zunehd, job-apply. Verified: fresh `claude -p --model haiku` session invoked Skill write-adr as its first tool_use. Description 217 B, always loaded.
-- Class C: session-context skills route history to `.ai/history.md` (CLAUDE.template.md, create-/get-session-context, build-skill-library); backlog.md is parked items only. User sign-off in session bb853872.
+- Class C: new global skill `write-adr` (global-skills/write-adr, symlinked into ~/.claude/skills). Why: user chose per-decision MADR ADRs in docs/adr/ for five of the user's repos. Verified: fresh `claude -p --model haiku` session invoked Skill write-adr as its first tool_use. Description 217 B, always loaded.
+- Class C: session-context skills route history to `.ai/history.md` (CLAUDE.template.md, create-/get-session-context, build-skill-library); backlog.md is parked items only. User sign-off 2026-11-01.
+- Class C, user-approved 2026-11-01: `CLAUDE.template.md:4` cap changed from "~200-250 lines" to "12 KB (bytes, not lines)" to match create-session-context's byte cap (ADR-0007). Doc fix only.
+- Class A + B: backfilled ADR-0001 to ADR-0013 in `docs/adr/` (index `docs/adr/README.md`) with write-adr; CLAUDE.md gained a one-line pointer under Architecture. Verified: fresh `claude -p --model haiku` run (Bash/Edit/Write disallowed) made Read `docs/adr` -> Glob `docs/adr/**/*` -> Read `docs/adr/0001-...md` and summarized ADR 0001 correctly.
 
 ## Last session: 2026-10-31 (stop gate: subagents, global, field report)
 - Class B, `stop_gate.py` v1.1: marker lines gain `agent_id`/`agent_type`/`cwd`; labels drop
@@ -81,7 +83,7 @@ Found and fixed one real bug (Bash `ls` check on missing CLAUDE.md surfaced a fa
 command" in the UI — switched to Read tool) and confirmed one non-bug (Skills don't appear in
 the native "/" autocomplete menu; typed `/skill-name` still reaches Claude as text and gets
 matched). Corrected an earlier wrong claim that `.ai/` is "often gitignored" — verified via
-`git ls-files` it's tracked in job-apply, oneness-suite, and alitahir6001.github.io. Updated
+`git ls-files` it's tracked in a private project, oneness-suite, and alitahir6001.github.io. Updated
 `SKILLS_AVAILABLE.md` to reflect the rename. Trio is now considered done; no open task.
 
 ## 2026-07-08 (session 1, from CLAUDE.md "Recent context")
