@@ -16,7 +16,7 @@ discovery actually finds — the slots are fixed, the content is this repo's.
 **Start with `.ai/` — the user maintains this directory by hand in most of their projects.**
 The usual layout (may vary per project): `handoff.md` (live state snapshot; its Active
 task section names the current task), `rules.md` (locked project rules), `backlog.md`
-(parked work, sometimes session history), sometimes `notes.md` or demo/readiness docs.
+(parked work), `history.md` (session logs; older projects may still keep them in backlog), sometimes `notes.md` or demo/readiness docs.
 A legacy `current-task.md` may still exist in unmigrated projects. Sessions read only
 `handoff.md` at startup, but this is a one-time build: read every file in it.
 Treat its contents as the primary source for history, incidents, priorities, and
@@ -70,7 +70,7 @@ Fold the answers into everything below.
    - `<project>-evidence-and-analysis`: how a hunch becomes an accepted result here —
      analysis recipes (premise teardown, build-vs-buy, discriminating experiment,
      root-cause) each with a worked example mined from THIS repo's history (`.ai/`
-     backlog/handoff entries are the richest vein).
+     history/handoff entries are the richest vein).
    - `<project>-research-frontier`: open problems where this project could advance
      past its current state — for each: why the current approach falls short, the
      project's specific asset, the first three concrete steps IN THIS REPO, and a
