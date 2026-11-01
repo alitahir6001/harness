@@ -28,7 +28,7 @@ Measured baseline (September 2026, audit of 171 sessions across the user's proje
 bash .claude/skills/harness-runbook/scripts/audit-config.sh   # always-loaded inventory
 ```
 In an active session: `/context` (context composition) and `/cost` (session usage).
-Then log in `.ai/backlog.md` for ~3 working days: date, sessions until cap, model used,
+Then log in `.ai/history.md` for ~3 working days: date, sessions until cap, model used,
 task types.
 
 **Gate:** you have numbers. If `/context` or `/cost` output differs from expectations
@@ -93,7 +93,7 @@ CLAUDE.md, a 40-line project CLAUDE.md and a 6-line memory index.
 ## Validation & promotion
 
 Success metric (measurable, never by eye): **sessions—or tasks—completed per 5-hour
-window before the cap**, logged in `.ai/backlog.md`, compared to the Phase 0 baseline.
+window before the cap**, logged in `.ai/history.md`, compared to the Phase 0 baseline.
 A lever is promoted (made a default, e.g. changing `~/.claude/settings.json` model) only
 after its kill-test fails to kill it across ≥1 week of normal use, and only via a
 Class C sign-off (`harness-change-control`).
