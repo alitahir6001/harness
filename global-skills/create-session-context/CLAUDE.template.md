@@ -1,7 +1,7 @@
 <!-- Durable, project-specific knowledge for the agent. Auto-loaded every session.
      Maintenance: permanent facts only (ephemeral state -> .ai/handoff.md); add gotchas as
      you hit them and never delete them (compress instead); edit only when the user asks.
-     Soft cap ~200-250 lines, ideally far less.
+     Cap 12 KB (bytes, not lines), ideally far less.
      At session start get-session-context reads .ai/handoff.md only; .ai/rules.md and
      .ai/backlog.md load on demand. -->
 
