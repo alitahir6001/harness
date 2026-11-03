@@ -11,7 +11,9 @@ the learning workspace plus the versioned home of the global session skills
 (`global-skills/`, symlinked into `~/.claude/skills/`). Its proactive-escalation test came
 back negative on 2026-09-07 (the-advisor gotcha 28), so the "MUST" wording is retracted
 and consults are on-demand only. The test stubs behind the README findings now live in
-`experiments/`.
+`experiments/`. Session logs and the change log live in `.ai/history.md` (split out of
+`backlog.md` 2026-11-01, which now holds parked items only); read it only when asked
+about past work.
 
 ## Active task
 None. The advisor validation task is closed here:
@@ -27,7 +29,7 @@ None. The advisor validation task is closed here:
 - [ ] Originals of the 4 symlinked skills sit in `~/.claude/skills-aside-2026-10-31/`;
   remove once satisfied - user. `grill-me` is third-party and stays out of the repo.
 - [x] `CLAUDE.template.md` header and `build-skill-library` Phase 1 moved to the 3-file
-  layout; template's Recent context section dropped, history goes to `backlog.md`
+  layout; template's Recent context section dropped, history goes to `history.md`
   (2026-10-31, user-approved Class C)
 
 ## Next recommended step
