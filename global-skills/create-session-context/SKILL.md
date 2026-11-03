@@ -1,6 +1,6 @@
 ---
 name: create-session-context
-description: Scaffold a brand-new project's memory system — create .ai/ (handoff, rules, backlog) and a pruned root CLAUDE.md. Stack-agnostic. Use when starting or bootstrapping a new project from scratch. Keywords: new project, bootstrap, scaffold, set up .ai, initialize project memory, project setup.
+description: Scaffold a brand-new project's memory system — create .ai/ (handoff, rules, backlog, history) and a pruned root CLAUDE.md. Stack-agnostic. Use when starting or bootstrapping a new project from scratch. Keywords: new project, bootstrap, scaffold, set up .ai, initialize project memory, project setup.
 disable-model-invocation: true
 ---
 
@@ -14,7 +14,7 @@ Scaffold the **current directory** as a project root: create the `.ai/` memory f
 
 2. **Guard against clobbering.** Never overwrite anything that exists. Scaffold only what's missing, without asking — e.g. a repo that has `.ai/` but no `CLAUDE.md` gets just the `CLAUDE.md` (step 4), and vice versa. Report what was skipped as already present; only ask if the user explicitly wants an existing file replaced.
 
-3. **Create `.ai/` and three files.** `rules.md` ships with the full maintenance contract below — it's the one file a cold agent can read to learn how to use this directory, so create it exactly as written. The other two start as bare skeletons; `update-session-context` fills `handoff.md` in at a task boundary.
+3. **Create `.ai/` and four files.** `rules.md` ships with the full maintenance contract below — it's the one file a cold agent can read to learn how to use this directory, so create it exactly as written. The other three start as bare skeletons; `update-session-context` fills `handoff.md` in at a task boundary.
 
    `.ai/rules.md`:
    ```
@@ -49,17 +49,19 @@ Scaffold the **current directory** as a project root: create the `.ai/` memory f
    ## Populating from empty
    - **handoff.md** - Last updated (date + session N) / Current state (3 sentences) / Active task (what, why, remaining steps with status marks and owner) / Open threads (max 5) / Next recommended step / Out of scope. No "changed files" section - `git log` and `git diff` answer that for free and never go stale.
    - **backlog.md** - parked items only. Not a session log.
+   - **history.md** - session logs, change log (what changed, why, how verified), measurements. Newest first; append, don't rewrite.
 
    ## Quick reference: when to touch what
-   | Event | handoff.md | rules.md | backlog.md | CLAUDE.md |
-   |---|---|---|---|---|
-   | Made a code change | yes | - | - | - |
-   | Hit a blocker / found a bug | yes | - | - | - |
-   | Finished task, starting new one | yes | - | - | - |
-   | Task boundary / ~50% context | yes | - | - | - |
-   | User says "add a project rule" | - | yes | - | - |
-   | User says "park that" / "add to backlog" | - | - | yes | - |
-   | Discovered a permanent gotcha | yes | - | - | only if user agrees |
+   | Event | handoff.md | rules.md | backlog.md | history.md | CLAUDE.md |
+   |---|---|---|---|---|---|
+   | Made a code change | yes | - | - | - | - |
+   | Hit a blocker / found a bug | yes | - | - | - | - |
+   | Finished task, starting new one | yes | - | - | - | - |
+   | Task boundary / ~50% context | yes | - | - | - | - |
+   | User says "add a project rule" | - | yes | - | - | - |
+   | User says "park that" / "add to backlog" | - | - | yes | - | - |
+   | Config change, or a measurement worth keeping | - | - | - | yes | - |
+   | Discovered a permanent gotcha | yes | - | - | - | only if user agrees |
 
    ## Project-specific rules
    <!-- Tech stack, code conventions, agent workflow constraints (e.g. "never run git"), security rules - append as discovered. Skip anything guessable from the code. -->
@@ -87,6 +89,12 @@ Scaffold the **current directory** as a project root: create the `.ai/` memory f
    Parked work. Not read at session start — pull it in when asked.
 
    ## Parked items
+   ```
+   `.ai/history.md`:
+   ```
+   # History
+
+   Session logs, change log and measurements, newest first. Not read at session start — pull it in when asked about past work.
    ```
 
 4. **Create root `CLAUDE.md` from the template.** Copy `~/.claude/skills/create-session-context/CLAUDE.template.md` to `./CLAUDE.md`. Fill in only what you can confidently infer from the directory (project name; a one-line "what this project is" if obvious from a README or `package.json` description). Leave everything else as bracketed placeholders and keep the guidance comment block so the user can prune later — including the note about small projects skipping File map / Architecture. **Cap at 12 KB** (bytes, not lines) — this file is loaded on every single session, so it is the most expensive text in the project.
