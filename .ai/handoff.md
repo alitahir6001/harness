@@ -26,8 +26,8 @@ None. The advisor validation task is closed here:
 - [ ] Pin `the-advisor` and `harness` on the GitHub profile - user (unverifiable from here)
 - [ ] Delete `~/.claude/settings.json.bak-stopgate-20261031-160521` once the kill-test is
   settled - user
-- [ ] Originals of the 4 symlinked skills sit in `~/.claude/skills-aside-2026-10-31/`;
-  remove once satisfied - user. `grill-me` is third-party and stays out of the repo.
+- [x] Originals of the 4 symlinked skills (`~/.claude/skills-aside-2026-10-31/`) moved to
+  Trash 2026-11-08 - user. `grill-me` is third-party and stays out of the repo.
 - [x] `CLAUDE.template.md` header and `build-skill-library` Phase 1 moved to the 3-file
   layout; template's Recent context section dropped, history goes to `history.md`
   (2026-10-31, user-approved Class C)
