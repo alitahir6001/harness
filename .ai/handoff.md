@@ -33,21 +33,16 @@ None. The advisor validation task is closed here:
   (2026-10-31, user-approved Class C)
 
 ## Next recommended step
-**Stop-gate kill-test, due 2026-11-07.** The gate (v1.1) is global since 2026-10-31
-(`~/.claude/settings.json` → `.claude/hooks/stop_gate.py` in this repo; results in
-`experiments/stop-gate-test/RESULT.md`). Run `python3 experiments/stop-gate-test/field_report.py`,
-then open 10 nudge continuations in the transcripts. Proposed criteria (the user sets the
-final numbers):
-- **Remove** (`python3 .claude/hooks/install_global.py --uninstall`) if none of the 10 caught
-  a real problem.
-- **Tune** if most nudges follow read-only turns (`git status`, `ls`, and so on: candidate
-  fix, skip read-only Bash), or if extra tokens per nudge are too costly. Cost scales with
-  context: ~25k input-side on a fresh turn, ~310k per extra request in a long Opus session.
-- **Keep** otherwise.
-Baseline on 2026-10-31: 4 nudges, 3/4 followed by a tool call.
+**Watch stop-gate v1.2 field data** (risk-scoped since 2026-11-08; kill-test done: kept and
+tuned, see `.ai/history.md` 2026-11-08). The gate now nudges only after risky actions
+(`is_risky()` in `.claude/hooks/stop_gate.py`); routine calls log `skip` in
+`~/.claude/stop-gate/marker.log`. Replay predicted 64% fewer nudges. After ~a week: count
+`nudge` vs `skip` in marker.log, rerun `field_report.py`, and sample a few nudges for real
+catches. Watch for misses (risky work that got `skip`), e.g. scripts that write global config
+without naming the path.
 Fragility: the command points into this repo. Moving or renaming it silences the gate
 everywhere (the `[ -f ]` guard makes that a quiet exit 1, not a blocking exit 2).
-Next build after the kill-test: escalation enforcement.
+Next build after this: escalation enforcement.
 
 ## Out of scope
 Advisor plugin work (edit the-advisor repo); rerunning the stub tests in place (copy them out first).
