@@ -1,6 +1,6 @@
 ---
 name: write-adr
-description: Write or backfill an Architecture Decision Record (MADR 4.0) in docs/adr/. Use when a design or architecture decision is made, reversed, or needs its "why" recorded, or when the user says "write an ADR".
+description: Write or backfill an Architecture Decision Record (MADR) in docs/adr/. Use when a design or architecture decision is made, reversed, or needs its "why" recorded, or when the user says "write an ADR".
 ---
 
 # write-adr
@@ -11,9 +11,22 @@ One file per decision, in `docs/adr/`. ADRs are committed and may be public: a f
 Yes if a future session could reasonably reverse it without knowing why: a choice between real alternatives with lasting consequences (architecture, interfaces, data model, provider, workflow contract, naming the user relies on).
 No for session narrative, bug fixes, or operational traps; those belong in `.ai/history.md`, git, or `CLAUDE.md` gotchas.
 
+## Check the current MADR first
+The template below matches MADR 4.0.0 (checked 2026-11-08). Before writing, look for a newer release:
+
+```bash
+gh api repos/adr/madr/releases/latest --jq .tag_name
+# without gh: git ls-remote --tags --refs https://github.com/adr/madr.git | sed 's|.*refs/tags/||' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1
+```
+
+- Same version: use the template below.
+- Newer: read its `template/adr-template-minimal.md` and `template/adr-template.md` (`gh api "repos/adr/madr/contents/template/<file>?ref=<tag>" -H "Accept: application/vnd.github.raw"`). Show the user what changed against the template below (sections, their order, required vs optional, fixed wording). Ask before writing; if they adopt it, update this file and its version line.
+- Check fails (offline, rate limit): use the template below and tell the user the check was skipped.
+- Kept unless the user says otherwise: the `docs/adr/` folder (MADR suggests `docs/decisions/`) and the `(alternatives not recorded)` rule.
+
 ## File
 - Path: `docs/adr/NNNN-title-with-dashes.md`. Write it to the repo with Write/Edit; never publish an ADR as an artifact or anywhere outside the repo. NNNN = next unused number, zero-padded, never reused. Title lowercase, dashes.
-- Template (MADR 4.0 minimal plus front matter):
+- Template (MADR minimal, plus the full template's optional front matter and More Information):
 
 ```markdown
 ---
@@ -42,6 +55,8 @@ Evidence: {commits, files, gotcha numbers, docs}. {Related ADRs.}
 
 - `status`: `proposed` | `accepted` | `rejected` | `deprecated` | `superseded by ADR-NNNN`.
 - `date`: when the decision was made (backfill: the date the evidence shows), not today.
+- Quote the chosen option exactly as it is listed under Considered Options.
+- Consequences are `Good, because` or `Bad, because`; MADR keeps `Neutral` for its Pros and Cons section. A neutral fact goes in Decision Outcome (scope) or More Information.
 
 ## Evidence rules
 - Every fact cites a source: commit hash, `file:line`, a `CLAUDE.md` gotcha number, or a doc in the repo.
