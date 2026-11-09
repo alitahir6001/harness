@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Stop-hook verification gate (v1.1).
+"""Stop-hook verification gate (v1.2).
 
-PostToolUse (Edit|Write|MultiEdit|NotebookEdit|Bash) records each action, a subagent's too
-(same session_id); Stop nudges once per turn that recorded any, naming those actions and
+PostToolUse (Edit|Write|MultiEdit|NotebookEdit|Bash) records each risky action (is_risky), a
+subagent's too (same session_id); routine ones are only logged. Stop nudges once per turn that recorded any, naming those actions and
 asking Claude to check their real effect. A Stop that pauses for a background subagent defers.
 State and marker log live in $STOP_GATE_DIR (default ~/.claude/stop-gate/).
 """
@@ -20,11 +20,33 @@ GENERIC = ("Before you finish, verify your work: for each command you ran and fi
            "changed, " + CHECK)
 MAX_ITEMS, MAX_CHARS = 8, 100
 
+# v1.2 risky set, replayed 2026-11-08 against 129 v1.1 nudges: fires on 47, incl. the hermes-token catch.
+_HOME = re.escape(os.path.expanduser("~"))
+_HOME_DOT = r"(~|\$HOME|\$\{HOME\}|" + _HOME + r")/\."
+_SECRET = re.compile(r"\.env\b|settings(\.local)?\.json|\.zshrc|sk-ant-|(?<![a-z])(token|secret)(?![a-z-])"
+                     r"|passw(or)?d|credential|(?<![a-z])(api[_-]?)?keys?(?![a-z])", re.I)
+_DESTRUCT = re.compile(r"(^|[\s;&|(`])(sudo\s+)?(rm|mv|rmdir|unlink|trash)\s|\.Trash\b")
+_PUSH = re.compile(r"\bgit\b[^;&|\n]*\bpush\b")
+# Lookbehind skips `2>/dev/null` and `2>&1`.
+_BASH_WRITE = re.compile(r"(?<![\d&])>>?\s*['\"]?" + _HOME_DOT + r"|\btee\s+(-a\s+)?['\"]?" + _HOME_DOT
+                         + r"|\bsed\s+-i|\b(cp|ln|chmod|chown|install|mkdir|touch)\s")
+_HOME_DOT_PATH = re.compile(r"(" + _HOME + r"|~)/\.(?!claude/plans/)")  # plan-mode files are routine
 
-def decide(event, stop_hook_active, dirty, waiting=False):
-    """Return 'mark', 'nudge', 'defer' or 'allow'."""
+
+def is_risky(tool, tool_input):
+    """True for secrets, rm/mv/Trash, git push, or writes to home dotfiles (~/.claude, ~/.zshrc...)."""
+    if tool == "Bash":
+        cmd = str(tool_input.get("command", ""))
+        return bool(_SECRET.search(cmd) or _DESTRUCT.search(cmd) or _PUSH.search(cmd)
+                    or (re.search(_HOME_DOT, cmd) and _BASH_WRITE.search(cmd)))
+    path = str(tool_input.get("file_path") or tool_input.get("notebook_path") or "")
+    return bool(_SECRET.search(path) or _HOME_DOT_PATH.match(path))
+
+
+def decide(event, stop_hook_active, dirty, waiting=False, risky=True):
+    """Return 'mark', 'skip', 'nudge', 'defer' or 'allow'."""
     if event == "PostToolUse":
-        return "mark"
+        return "mark" if risky else "skip"
     if event == "Stop" and dirty and not stop_hook_active:
         # Paused for a background subagent: keep the record, nudge when the work really ends.
         return "defer" if waiting else "nudge"
@@ -71,13 +93,13 @@ def main():
     dirty = os.path.exists(flag)
     waiting = any(t.get("type") == "subagent" for t in data.get("background_tasks") or [])
 
-    action = decide(event, active, dirty, waiting)
+    tool, tool_input = data.get("tool_name", ""), data.get("tool_input") or {}
+    action = decide(event, active, dirty, waiting, is_risky(tool, tool_input))
     actions = []
     if action == "mark":
         with open(flag, "a") as f:
-            f.write(describe(data.get("tool_name", ""), data.get("tool_input") or {},
-                             data.get("cwd")) + "\n")
-    elif dirty and action != "defer":
+            f.write(describe(tool, tool_input, data.get("cwd")) + "\n")
+    elif event == "Stop" and dirty and action != "defer":
         with open(flag) as f:
             actions = [line.rstrip("\n") for line in f if line.strip()]
         # Stop always ends the dirty turn, whether or not it nudges.
